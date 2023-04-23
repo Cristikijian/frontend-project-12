@@ -1,7 +1,10 @@
-import React from "react";
+import React, { useContext } from "react";
 import SinginForm from "../../components/SinginForm";
+import { UserContext } from "../../context";
 
 const LoginPage = () => {
+  const context = useContext(UserContext);
+  console.log(context);
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">
@@ -11,7 +14,7 @@ const LoginPage = () => {
               <div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
               <img src="/LoginPage.jpg" className="rounded-circle" alt="Войти" />
               </div>
-              <SinginForm />
+                <SinginForm />
             </div>
             <div className="card-footer p-4">
               <div className="text-center">

@@ -1,10 +1,12 @@
 import './App.css';
+import React from 'react';
 import {
   createBrowserRouter,
   RouterProvider,
   redirect,
 } from "react-router-dom";
 import LoginPage from './pages/LoginPage';
+import { UserContextProvider } from './context';
 
 const router = createBrowserRouter([
   {
@@ -19,7 +21,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <RouterProvider router={router} />
+    <UserContextProvider>
+      <RouterProvider router={router} />
+    </UserContextProvider>
   );
 }
 
