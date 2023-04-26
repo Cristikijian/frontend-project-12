@@ -3,7 +3,8 @@ import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
 import { useContext } from 'react';
-import { UserContext } from '../../context';
+import { UserContext } from '../../../../context';
+import { useNavigate } from "react-router-dom";
 
 const SigninSchema = Yup.object().shape({
    username: Yup.string()
@@ -14,6 +15,7 @@ const SigninSchema = Yup.object().shape({
 
 const SinginForm = () => {
   const context = useContext(UserContext);
+  const navigate = useNavigate();
     return <Formik
       initialValues={{
         username: '',
@@ -27,7 +29,8 @@ const SinginForm = () => {
           console.log(context);
           window.localStorage.setItem('token', response.data.token);
           console.log(response.data);
-          }
+          navigate('/');
+        }
         catch (e) {
           console.error(e);
         }

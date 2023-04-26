@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import SinginForm from "../../components/SinginForm";
+import SinginForm from "./components/SinginForm";
 import { UserContext } from "../../context";
 
 const LoginPage = () => {
