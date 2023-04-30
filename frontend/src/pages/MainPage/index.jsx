@@ -4,8 +4,8 @@ import { useNavigate} from "react-router-dom";
 import { UserContext } from "../../context";
 import axios from "axios";
 import Normalizer from "../../utils/normalizer";
-import { actions as chatsActions } from "../../slices/chatsSlice"
-import Chats from "../../components/ChatList";
+import { actions as chatsActions } from "../../slices/channelsSlice"
+import Channels from "../../components/ChannelList";
 
 const MainPage = () => {
   const context = useContext(UserContext);
@@ -13,17 +13,17 @@ const MainPage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    if(!context.token && !window.localStorage.getItem('token')) {
+    console.log(context);
+    if(!context.token) {
       navigate('login');
       return;
     }
     const fetchData = async () => {
       const {data} = await axios.get('/api/v1/data', { headers: {'Authorization': `Bearer ${context.token}`}});
-      console.log(data);
-      const normalizedData = Normalizer(data);
-      const { chats } = normalizedData.entities;
+      const normalizedData = Normalizer(data.channels);
+      const { channels } = normalizedData.entities;
 
-      dispatch(chatsActions.addChat(chats));
+      dispatch(chatsActions.addChannels(channels));
     }
 
     fetchData();
@@ -46,8 +46,8 @@ const MainPage = () => {
                   <span className="visually-hidden">+</span>
                 </button>
               </div>
-              <><Chats>
-              </Chats></>
+              <><Channels>
+              </Channels></>
             </div>
             <div className="col p-0 h-100">
               <div className="d-flex flex-column h-100">

@@ -1,13 +1,12 @@
 import React, { useState } from "react";
-const contextData = {
-  token: null,
-  username: '',
-};
 
-const UserContext = React.createContext(contextData);
+const UserContext = React.createContext({});
 
 const UserContextProvider = ({ children }) => {
-  const [ context, setContext ] = useState(contextData);
+  const [ context, setContext ] = useState({
+    token: window.localStorage.getItem('token'),
+    username: '',
+  });
 
   return (
     <UserContext.Provider value={{ ...context, setContext }}>
@@ -16,4 +15,4 @@ const UserContextProvider = ({ children }) => {
   );
 };
 
-export { UserContext, contextData, UserContextProvider};
+export { UserContext, UserContextProvider};
