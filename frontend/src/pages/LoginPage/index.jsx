@@ -1,10 +1,16 @@
-import React, { useContext } from "react";
 import SinginForm from "./components/SinginForm";
+import { useContext, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context";
 
 const LoginPage = () => {
   const context = useContext(UserContext);
-  console.log(context);
+  const navigate = useNavigate();
+  useEffect(() => {
+    if(context.token) {
+      navigate('/');
+    }
+  }, [context.token, navigate])
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">

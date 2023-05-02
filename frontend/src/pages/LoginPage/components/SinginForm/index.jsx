@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Formik, Field, Form } from 'formik';
 import * as Yup from 'yup';
 import axios from 'axios';
@@ -15,7 +15,6 @@ const SigninSchema = Yup.object().shape({
 
 const SinginForm = () => {
   const context = useContext(UserContext);
-  const navigate = useNavigate();
     return <Formik
       initialValues={{
         username: '',
@@ -28,8 +27,6 @@ const SinginForm = () => {
           context.setContext({token: response.data.token, username: response.data.username});
           console.log(context);
           window.localStorage.setItem('token', response.data.token);
-          console.log(response.data);
-          navigate('/');
         }
         catch (e) {
           console.error(e);
