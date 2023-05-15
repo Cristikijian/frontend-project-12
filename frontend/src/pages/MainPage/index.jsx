@@ -4,9 +4,9 @@ import { useNavigate} from "react-router-dom";
 import { UserContext } from "../../context";
 import axios from "axios";
 import Normalizer from "../../utils/normalizer";
-import { actions as chatsActions, selectors } from "../../slices/channelsSlice"
-import Channel from "../../components/Channel";
-import ChatContainer from "../../components/ChatContainer";
+import { actions as channelActions, selectors as channelSelectors } from "../../slices/channelsSlice"
+import Channel from "./components/Channel";
+import ChatContainer from "./components/ChatContainer";
 
 
 const MainPage = () => {
@@ -24,8 +24,8 @@ const MainPage = () => {
       const normalizedData = Normalizer(data.channels);
       const { channels } = normalizedData.entities;
 
-      dispatch(chatsActions.addChannels(channels));
-      dispatch(chatsActions.setCurrentChannelId(data.currentChannelId));
+      dispatch(channelActions.addChannels(channels));
+      dispatch(channelActions.setCurrentChannelId(data.currentChannelId));
     }
 
     fetchData();
@@ -33,16 +33,17 @@ const MainPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const channels = useSelector(selectors.selectAll);
+  const channels = useSelector(channelSelectors.selectAll);
   
   const currentChannel = useSelector((state) => { 
     const currentChannelId = state.channels.currentChannelId;
-    return selectors.selectById(state, currentChannelId);
+    return channelSelectors.selectById(state, currentChannelId);
   });
   
   const handleChannelSelect = (id) => {
-    dispatch(chatsActions.setCurrentChannelId(id));
+    dispatch(channelActions.setCurrentChannelId(id));
   }
+
 
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">

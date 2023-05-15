@@ -10,7 +10,7 @@ const messagesSlice = createSlice({
   name: 'messages',
   initialState,
   reducers: {
-    addChannel: messagesAdapter.addOne,
+    addMessage: messagesAdapter.addOne,
     },
 });
 
