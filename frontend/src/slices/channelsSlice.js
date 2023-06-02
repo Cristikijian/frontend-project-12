@@ -10,10 +10,13 @@ const initialState = channelsAdapter.getInitialState({
 
 const channelsSlice = createSlice({
   name: 'channels',
+  author: '',
   initialState,
   reducers: {
     addChannel: channelsAdapter.addOne,
     addChannels: channelsAdapter.addMany,
+    removeChannel: channelsAdapter.removeOne,
+    updateChannel: channelsAdapter.updateOne,
     setCurrentChannelId: (state, { payload }) => {
       state.currentChannelId = payload;
     },

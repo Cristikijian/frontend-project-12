@@ -11,9 +11,10 @@ const MessageForm = ({ channel }) => {
     initialValues={{
       message: '',
     }}
-    onSubmit={(values) => {
+    onSubmit={(values, { resetForm }) => {
       try {
         ioClient.emit('newMessage', { body: values.message, channelId: channel.id, username: context.username });
+        resetForm();
       }
       catch(e) {
         console.error(e);

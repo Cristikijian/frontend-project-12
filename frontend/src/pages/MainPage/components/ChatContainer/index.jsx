@@ -9,14 +9,13 @@ import ioClient from "../../../../servicesSocket/socket";
 const ChatContainer = ({ channel }) => {
   
   const messages = useSelector(messagesSelectors.selectAll);
+  const filtredMessages = messages.filter((message) => channel.id === message.channelId)
   const dispatch = useDispatch();
   
   useEffect(() => {
-    ioClient.on('connect', () => {
-      ioClient.on('newMessage', (message) => {
-        console.log(message);
-        dispatch(messagesActions.addMessage(message))
-      })
+    ioClient.on('newMessage', (message) => {
+      console.log(message);
+      dispatch(messagesActions.addMessage(message))
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -27,7 +26,7 @@ const ChatContainer = ({ channel }) => {
       <p className="m-0"><b># {channel.name}</b></p>
       <span className="text-muted">0 сообщений</span>
     </div>
-    <div id="messages-box" className="chat-messages overflow-auto px-5 ">{messages.map((message) => <Message message={message} key={message.id}/>)}</div>
+    <div id="messages-box" className="chat-messages overflow-auto px-5 ">{filtredMessages.map((message) => <Message message={message} key={message.id}/>)}</div>
     <div className="mt-auto px-5 py-3">
       <MessageForm channel={channel}/>
     </div>

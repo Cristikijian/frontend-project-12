@@ -26,6 +26,7 @@ const SinginForm = () => {
           context.setContext({token: response.data.token, username: response.data.username});
           console.log(context);
           window.localStorage.setItem('token', response.data.token);
+          window.localStorage.setItem('username', response.data.username);
         }
         catch (e) {
           console.error(e);
@@ -36,12 +37,12 @@ const SinginForm = () => {
         <Form className='col-12 col-md-6 mt-3 mt-mb-0'>
           <h1 className='text-center mb-4'>Войти</h1>
             <div className='form-floating mb-3'>
-              <Field className="form-control" id="username" name="username" placeholder="Ваш ник" />
+              <Field className="form-control" id="username" name="username" placeholder="Ваш ник" required/>
               <label htmlFor="username">Ваш ник</label>
             </div>
             
             <div className='form-floating mb-4'>
-              <Field className="form-control" id="password" name="password" placeholder="Пароль"/>
+              <Field className="form-control" id="password" name="password" placeholder="Пароль" required/>
               <label htmlFor="password">Пароль</label>
             </div>
             

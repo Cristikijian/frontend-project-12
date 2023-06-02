@@ -2,6 +2,7 @@ import "./App.css";
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
+import SignUpPage from "./pages/SignUpPage";
 import { UserContextProvider } from "./context";
 import MainPage from "./pages/MainPage";
 import Layout from "./components/Layout";
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: "login",
         element: <LoginPage />,
+      },
+      {
+        path: "signup",
+        element: <SignUpPage />,
       },
   ]}
 ]);

@@ -5,7 +5,7 @@ const UserContext = React.createContext({});
 const UserContextProvider = ({ children }) => {
   const [ context, setContext ] = useState({
     token: window.localStorage.getItem('token'),
-    username: '',
+    username: window.localStorage.getItem('username'),
   });
 
   return (
