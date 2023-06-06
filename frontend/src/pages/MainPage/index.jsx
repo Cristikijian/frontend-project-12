@@ -1,18 +1,18 @@
-import React, { useContext, useEffect, useState, useRef } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate} from "react-router-dom";
-import { UserContext } from "../../context";
 import axios from "axios";
-import Normalizer from "../../utils/normalizer";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { actions as channelActions, selectors as channelSelectors } from "../../slices/channelsSlice"
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { UserContext } from "../../context";
+import ioClient from "../../servicesSocket/socket";
+import { actions as channelActions, selectors as channelSelectors } from "../../slices/channelsSlice";
+import Normalizer from "../../utils/normalizer";
+import AddChannelModal from "./components/AddChannelModal";
 import Channel from "./components/Channel";
 import ChatContainer from "./components/ChatContainer";
-import AddChannelModal from "./components/AddChannelModal";
 import DeleteChannelModal from "./components/DeleteChannelModal";
 import RenameChannelModal from "./components/RenameChannelModal";
-import ioClient from "../../servicesSocket/socket";
-
 
 const MainPage = () => {
   const context = useContext(UserContext);
@@ -41,21 +41,21 @@ const MainPage = () => {
     fetchData();
     
     ioClient.on('removeChannel', (payload) => {
-      console.log(payload.id);
-
       dispatch(channelActions.setCurrentChannelId(defaultChannel.current));
       dispatch(channelActions.removeChannel(payload.id));
+      toast.success(t('toasts.delete'));
     });
 
     ioClient.on('renameChannel', (payload) => {
       console.log(payload);
-      dispatch(channelActions.updateChannel(payload))
+      dispatch(channelActions.updateChannel({id: payload.id, changes: { name: payload.name }}));
+      toast.success(t('toasts.rename'));
     });
 
     ioClient.on('newChannel', (payload) => {
-      console.log(payload); // { id: 6, name: "new channel", removable: true }
       dispatch(channelActions.setCurrentChannelId(payload.id));
       dispatch(channelActions.addChannel(payload));
+      toast.success(t('toasts.add'));
     });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

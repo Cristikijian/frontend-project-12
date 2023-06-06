@@ -1,27 +1,29 @@
-import React, { useContext} from "react";
-import { Modal, Button } from "react-bootstrap";
-import { Formik, Field, Form } from "formik";
-import { useDispatch } from "react-redux";
 import axios from "axios";
-import * as Yup from 'yup';
-import { toast } from "react-toastify";
-import ioClient from "../../../../servicesSocket/socket";
+import { Field, Form, Formik } from "formik";
+import React, { useContext, useEffect, useState } from "react";
+import { Button, Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { actions as channelActions } from "../../../../slices/channelsSlice"
+import * as Yup from 'yup';
 import { UserContext } from "../../../../context";
+import ioClient from "../../../../servicesSocket/socket";
 
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
-  const dispatch = useDispatch();
   const context = useContext(UserContext);
+  const [ inputRef, setInputRef ] = useState();
+  useEffect(() => {
+    if(inputRef) {
+      inputRef.focus();
+      inputRef.select();
+    }
+  }, [inputRef]);
   const { t } = useTranslation();
   if(!channel) {
     return null;
   }
-
-  console.log(channel);
+  
   const uniqChannelNameSchema = Yup.object().shape({
-    channel: Yup.string().required().test('uniqChannel', t('errors.uniq'),
+    channelName: Yup.string().required().test('uniqChannel', t('errors.uniq'),
       () => t('errors.uniq'),
       async (value) => {
         const {data} = await axios.get('/api/v1/data', { headers: {'Authorization': `Bearer ${context.token}`}});
@@ -29,7 +31,6 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       }
     )
   });
-  
 
   return (
     <Modal show={show}>
@@ -43,8 +44,6 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
             ioClient.emit('renameChannel', { id: channel.id, name: values.channelName });
             resetForm();
             onHide();
-            toast.success(t('toasts.delete'));
-            dispatch(channelActions.updateChannel());  
           } catch (e) {
             console.error(e);
           }
@@ -63,16 +62,16 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
                   aria-label="Имя канала"
                   placeholder="Имя канала"
                   className="mb-2 form-control"
-                  value={values.channelName}
                   innerRef={(el) => {
                     if(!el) {
                       return;
-                    } 
-                    el.focus();
-                    el.select();
+                    }
+                    if(!inputRef) {
+                      setInputRef(el);
+                    }          
                   }}
                 />
-                <label htmlFor="channelname" className="visually-hidden">
+                <label htmlFor="channelName" className="visually-hidden">
                   {channel.name}
                 </label>
                 <div className="invalid-feedback"></div>

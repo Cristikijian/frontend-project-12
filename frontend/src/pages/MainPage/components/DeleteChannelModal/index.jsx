@@ -1,9 +1,7 @@
 import React from "react";
-import { Modal, Button } from "react-bootstrap";
-import ioClient from "../../../../servicesSocket/socket";
-import * as Yup from 'yup';
+import { Button, Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { toast } from "react-toastify";
+import ioClient from "../../../../servicesSocket/socket";
 
 const DeleteChannelModal = ({ show, onHide, id}) => {
   const { t } = useTranslation();
@@ -11,7 +9,6 @@ const DeleteChannelModal = ({ show, onHide, id}) => {
   const handleChannelRemove = () => {
     try {
       ioClient.emit('removeChannel', { id });
-      toast.success(t('toasts.delete'));
       onHide();
     }
     catch {

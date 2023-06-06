@@ -1,18 +1,14 @@
-import React, { useContext} from "react";
-import { Modal, Button, Toast } from "react-bootstrap";
-import { Formik, Field, Form } from "formik";
-import { useDispatch } from "react-redux";
 import axios from "axios";
-import * as Yup from 'yup';
+import { Field, Form, Formik } from "formik";
+import React, { useContext } from "react";
+import { Button, Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
-import { toast } from 'react-toastify';
-import ioClient from "../../../../servicesSocket/socket";
-import { actions as channelActions } from "../../../../slices/channelsSlice"
+import * as Yup from 'yup';
 import { UserContext } from "../../../../context";
+import ioClient from "../../../../servicesSocket/socket";
 
 
 const AddChannelModal = ({ show, onHide, channels }) => {
-  const dispatch = useDispatch();
   const context = useContext(UserContext);
   const { t } = useTranslation();
 
@@ -39,7 +35,6 @@ const AddChannelModal = ({ show, onHide, channels }) => {
           try {
             const newChannel = { name: values.channel, author: values.author }
             ioClient.emit("newChannel", newChannel);
-            toast.success(t('toasts.add'));
             resetForm();
             onHide();
           } catch (e) {
