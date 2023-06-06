@@ -1,22 +1,35 @@
-import React, { useState } from 'react';
-import { Formik, Field, Form, ErrorMessage } from 'formik';
+import React, { useState, useContext } from 'react';
+import { Formik, Field, Form } from 'formik';
+import { useNavigate } from "react-router-dom";
+import cn from 'classnames';
+import { Button } from 'react-bootstrap';
 import * as Yup from 'yup';
 import axios from 'axios';
+import { useTranslation } from 'react-i18next';
+import { UserContext } from '../../../../context';
+
+
+const SignUpForm = () => {
+  const [ userCreationError, setError ] = useState(false);
+  const context = useContext(UserContext);
+  const navigate = useNavigate();
+
+  const { t } = useTranslation();
 
 const SignUpSchema = Yup.object().shape({
    username: Yup.string()
-     .required('Required')
-     .min(3, 'Имя должно быть не короче 3 символов')
-     .max(20, 'Имя должно быть не длиннее 20 символов'),
+     .required(t('errors.required'))
+     .trim()
+     .min(3, t('errors.min3'))
+     .max(20, t('errors.max')),
    password: Yup.string()
-     .required('Required')
-     .min(6, 'Не короче 6 символов'),
+     .required(t('errors.required'))
+     .trim()
+     .min(6, t('errors.min6')),
    confirmPassword: Yup.string()
-     .oneOf([Yup.ref('password'), null], 'Пароли должны совпадать')
+     .oneOf([Yup.ref('password'), null],  t('errors.match'))
  });
-
-const SignUpForm = () => {
-  const [ userCreationError, setError ] = useState();
+ 
     return <Formik
       initialValues={{
         username: '',
@@ -27,35 +40,47 @@ const SignUpForm = () => {
       onSubmit={async (values) => {
         try {
           const response = await axios.post('/api/v1/signup', { username: values.username, password: values.password });
-          if (response.status === 409) {
-            setError('Такой пользователь уже существует');
+          context.setContext({token: response.data.token, username: response.data.username});
+          console.log(context);
+          window.localStorage.setItem('token', response.data.token);
+          window.localStorage.setItem('username', response.data.username);
+          if(response.statusText === 'Created') {
+            navigate('/');
           }
+          console.log(response);
         }
         catch (e) {
-          console.error(e);
+          console.log(e, 'err');
+          if(e.message === 'Request failed with status code 409') {
+            setError(true);
+            console.log(e);
+          }
         }
       }}
     >
-      {({ errors, touched }) => (
+      {({ errors, touched }) => { 
+        console.log(errors); 
+        return (
        <Form className="w-50">
-       <h1 className="text-center mb-4">Регистрация</h1>
+       <h1 className="text-center mb-4">{t('registration')}</h1>
        <div className="form-floating mb-3">
-          <Field placeholder="От 3 до 20 символов" name="username" autocomplete="username" required="" id="username" className="form-control is-invalid"/><label className="form-label" for="username">Имя пользователя</label>
-          <div placement="right" className="invalid-tooltip">Обязательное поле</div>
+          <Field placeholder="От 3 до 20 символов" name="username" autoComplete="username" id="username" className={cn('form-control', {'is-invalid': errors.username})}/>
+          <label className="form-label" htmlFor="username">{t('user.username')}</label>
+          <div className="invalid-tooltip">{errors.username}</div>
        </div>
        <div className="form-floating mb-3">
-          <Field placeholder="Не менее 6 символов" name="password" aria-describedby="passwordHelpBlock" required="" autocomplete="new-password" type="password" id="password" className="form-control" />
-          <div className="invalid-tooltip">Обязательное поле</div>
-          <label className="form-label" for="password">Пароль</label>
+          <Field placeholder="Не менее 6 символов" name="password" aria-describedby="passwordHelpBlock" autoComplete="new-password" type="password" id="password" className={cn('form-control', {'is-invalid': errors.password})} />
+          <div className="invalid-tooltip">{errors.password}</div>
+          <label className="form-label" htmlFor="password">{t('user.password')}</label>
        </div>
-       <div class="form-floating mb-4">
-          <Field placeholder="Пароли должны совпадать" name="confirmPassword" required="" autocomplete="new-password" type="password" id="confirmPassword" className="form-control"/>
-          <div className="invalid-tooltip"></div>
-          <label className="form-label" for="confirmPassword">Подтвердите пароль</label>
+       <div className="form-floating mb-4">
+          <Field placeholder="Пароли должны совпадать" name="confirmPassword" autoComplete="new-password" type="password" id="confirmPassword" className={cn('form-control', {'is-invalid': errors.confirmPassword || userCreationError})}/>
+          <div className="invalid-tooltip">{userCreationError ? t('errors.exists') : null}{errors.confirmPassword}</div>
+          <label className="form-label" htmlFor="confirmPassword">{t('user.confirmPassword')}</label>
        </div>
-       <button type="submit" className="w-100 btn btn-outline-primary">Зарегистрироваться</button>
+       <Button variant="outline-primary" type="submit"className="w-100">{t('buttons.registration')}</Button>
     </Form>
-      )}
+      )}}
     </Formik>
 };
 

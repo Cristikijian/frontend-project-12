@@ -2,9 +2,11 @@ import SinginForm from "./components/SinginForm";
 import { useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../context";
+import { useTranslation } from "react-i18next";
 
 const LoginPage = () => {
   const context = useContext(UserContext);
+  const { t } = useTranslation();
   const navigate = useNavigate();
   useEffect(() => {
     if(context.token) {
@@ -24,7 +26,7 @@ const LoginPage = () => {
             </div>
             <div className="card-footer p-4">
               <div className="text-center">
-                <span>Нет аккаунта?</span> <a href="/signup">Регистрация</a>
+                <span>{t('questions.noAccount')}</span> <a href="/signup">{t('registration')}</a>
               </div>
             </div>
           </div>

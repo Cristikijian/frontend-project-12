@@ -4,6 +4,7 @@ import MessageForm from "../MessageForm";
 import { useSelector, useDispatch } from "react-redux";
 import { actions as messagesActions, selectors as messagesSelectors } from "../../../../slices/messagesSlice";
 import ioClient from "../../../../servicesSocket/socket";
+import { useTranslation } from "react-i18next";
 
 
 const ChatContainer = ({ channel }) => {
@@ -11,6 +12,7 @@ const ChatContainer = ({ channel }) => {
   const messages = useSelector(messagesSelectors.selectAll);
   const filtredMessages = messages.filter((message) => channel.id === message.channelId)
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   
   useEffect(() => {
     ioClient.on('newMessage', (message) => {
@@ -24,7 +26,7 @@ const ChatContainer = ({ channel }) => {
   <div className="d-flex flex-column h-100">
     <div className="bg-light mb-4 p-3 shadow-sm small">
       <p className="m-0"><b># {channel.name}</b></p>
-      <span className="text-muted">0 сообщений</span>
+      <span className="text-muted">{`${t('message.message', { count: filtredMessages.length })}`}</span>
     </div>
     <div id="messages-box" className="chat-messages overflow-auto px-5 ">{filtredMessages.map((message) => <Message message={message} key={message.id}/>)}</div>
     <div className="mt-auto px-5 py-3">

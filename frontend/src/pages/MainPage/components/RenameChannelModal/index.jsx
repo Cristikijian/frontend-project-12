@@ -4,7 +4,9 @@ import { Formik, Field, Form } from "formik";
 import { useDispatch } from "react-redux";
 import axios from "axios";
 import * as Yup from 'yup';
+import { toast } from "react-toastify";
 import ioClient from "../../../../servicesSocket/socket";
+import { useTranslation } from "react-i18next";
 import { actions as channelActions } from "../../../../slices/channelsSlice"
 import { UserContext } from "../../../../context";
 
@@ -12,14 +14,15 @@ import { UserContext } from "../../../../context";
 const RenameChannelModal = ({ show, onHide, channel }) => {
   const dispatch = useDispatch();
   const context = useContext(UserContext);
+  const { t } = useTranslation();
   if(!channel) {
     return null;
   }
 
   console.log(channel);
   const uniqChannelNameSchema = Yup.object().shape({
-    channel: Yup.string().required().test('uniqChannel',
-      () => 'Должно быть уникальным',
+    channel: Yup.string().required().test('uniqChannel', t('errors.uniq'),
+      () => t('errors.uniq'),
       async (value) => {
         const {data} = await axios.get('/api/v1/data', { headers: {'Authorization': `Bearer ${context.token}`}});
         return !data.channels.some((channel) => channel.name === value);
@@ -40,7 +43,8 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
             ioClient.emit('renameChannel', { id: channel.id, name: values.channelName });
             resetForm();
             onHide();
-            dispatch(channelActions.updateChannel());
+            toast.success(t('toasts.delete'));
+            dispatch(channelActions.updateChannel());  
           } catch (e) {
             console.error(e);
           }
@@ -49,13 +53,13 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
         {({ errors, touched, values }) => (
           <Form>
             <Modal.Header closeButton onHide={onHide}>
-              <Modal.Title>Переименовать канал</Modal.Title>
+              <Modal.Title>{t('channels.renameChannel')}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <div>
                 {errors.uniqChannel}
                 <Field
-                  name="channeName"
+                  name="channelName"
                   aria-label="Имя канала"
                   placeholder="Имя канала"
                   className="mb-2 form-control"
@@ -76,10 +80,10 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
             </Modal.Body>
             <Modal.Footer>
               <Button variant="secondary" onClick={onHide}>
-                Отменить
+                {t('buttons.cancel')}
               </Button>
               <Button variant="primary" type="submit">
-                Отправить
+                {t('buttons.send')}
               </Button>
             </Modal.Footer>
           </Form>
