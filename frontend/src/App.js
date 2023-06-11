@@ -1,5 +1,6 @@
 import { ErrorBoundary, Provider as RollbarProvider } from "@rollbar/react";
 import i18next from "i18next";
+import leoProfanity from "leo-profanity";
 import React from "react";
 import { I18nextProvider, initReactI18next } from "react-i18next";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
@@ -10,12 +11,14 @@ import { UserContextProvider } from "./context";
 import resources from "./locales/index.js";
 import LoginPage from "./pages/LoginPage";
 import MainPage from "./pages/MainPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import SignUpPage from "./pages/SignUpPage";
 import rollbarConfig from "./rollbar/rollbarConfig";
 
 const router = createBrowserRouter([
   {
     path: "/",
+    errorElement: <NotFoundPage />,
     element: <Layout />,
     children: [
       {
@@ -33,6 +36,9 @@ const router = createBrowserRouter([
     ],
   },
 ]);
+
+const ruDict = leoProfanity.getDictionary("ru");
+leoProfanity.add(ruDict);
 
 function App() {
   const i18n = i18next.createInstance();

@@ -1,36 +1,70 @@
 import axios from "axios";
+import cn from "classnames";
 import { Field, Form, Formik } from "formik";
 import React, { useContext, useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
+import { toast } from "react-toastify";
 import * as Yup from 'yup';
 import { UserContext } from "../../../../context";
 import ioClient from "../../../../servicesSocket/socket";
 
-
 const RenameChannelModal = ({ show, onHide, channel }) => {
   const context = useContext(UserContext);
   const [ inputRef, setInputRef ] = useState();
+  const [ customError, setCustomError ] = useState();
+  const [ isLoading, setIsLoading ] = useState(false);
+
   useEffect(() => {
     if(inputRef) {
       inputRef.focus();
       inputRef.select();
     }
   }, [inputRef]);
+  
   const { t } = useTranslation();
-  if(!channel) {
+
+  if (!channel) {
     return null;
   }
-  
-  const uniqChannelNameSchema = Yup.object().shape({
-    channelName: Yup.string().required().test('uniqChannel', t('errors.uniq'),
-      () => t('errors.uniq'),
-      async (value) => {
-        const {data} = await axios.get('/api/v1/data', { headers: {'Authorization': `Bearer ${context.token}`}});
-        return !data.channels.some((channel) => channel.name === value);
-      }
-    )
+
+  const channelNameSchema = Yup.object().shape({
+    channelName: Yup.string().required(t('errors.required'))
   });
+
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      setIsLoading(true);
+      setCustomError(false);
+
+      const {data} = await axios.get('/api/v1/data', { headers: {'Authorization': `Bearer ${context.token}`}});
+
+      if(channel.name === values.channelName) {
+        onHide();
+        return;
+      } else {
+        if (data.channels.some((channel) => channel.name === values.channelName)) {
+          setCustomError(t('errors.uniq'));
+          return;
+        }
+      }
+
+      ioClient.emit('renameChannel', { id: channel.id, name: values.channelName });
+      
+      resetForm();
+      onHide();
+    } catch (e) {
+      console.error(e, e.code, e.message);
+      if (e.message === 'Network Error') {
+        toast.error(t('errors.network'));
+        setCustomError(false);
+      }
+    } finally {
+      setIsLoading(false);
+      inputRef.reset();
+    }
+  }
+
 
   return (
     <Modal show={show}>
@@ -38,50 +72,50 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
         initialValues={{
           channelName: channel.name,
         }}
-        validationSchema={uniqChannelNameSchema}
-        onSubmit={(values, { resetForm }) => {
-          try {
-            ioClient.emit('renameChannel', { id: channel.id, name: values.channelName });
-            resetForm();
-            onHide();
-          } catch (e) {
-            console.error(e);
-          }
-        }}
+        validationSchema={channelNameSchema}
+        onSubmit={handleSubmit}
       >
-        {({ errors, touched, values }) => (
+        {({ errors, handleChange }) => (
           <Form>
-            <Modal.Header closeButton onHide={onHide}>
+            <Modal.Header closeButton onHide={() => {
+              setCustomError(false);
+              onHide();
+            }
+              }>
               <Modal.Title>{t('channels.renameChannel')}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <div>
-                {errors.uniqChannel}
                 <Field
                   name="channelName"
                   aria-label="Имя канала"
                   placeholder="Имя канала"
-                  className="mb-2 form-control"
+                  className={cn('form-control', 'mb-2', {'is-invalid': Boolean(errors.channelName) || customError})}
+                  onChange={(e) => {
+                    setCustomError(false)
+                    handleChange(e);
+                  }}
                   innerRef={(el) => {
                     if(!el) {
                       return;
                     }
-                    if(!inputRef) {
-                      setInputRef(el);
-                    }          
+                    setInputRef(el);       
                   }}
                 />
-                <label htmlFor="channelName" className="visually-hidden">
-                  {channel.name}
-                </label>
-                <div className="invalid-feedback"></div>
+                <div className="invalid-feedback">
+                  { errors.channelName }
+                  { customError }
+                </div>
               </div>
             </Modal.Body>
             <Modal.Footer>
-              <Button variant="secondary" onClick={onHide}>
+              <Button variant="secondary" onClick={(e)=> {
+                onHide();
+                setCustomError(false);
+              }}>
                 {t('buttons.cancel')}
               </Button>
-              <Button variant="primary" type="submit">
+              <Button variant="primary" type="submit" disabled={isLoading}>
                 {t('buttons.send')}
               </Button>
             </Modal.Footer>

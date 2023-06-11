@@ -1,8 +1,8 @@
-import React, { useContext} from "react";
-import { Formik, Field, Form } from 'formik';
-import ioClient from "../../../../servicesSocket/socket";
-import { UserContext } from "../../../../context";
+import { Field, Form, Formik } from 'formik';
+import React, { useContext } from "react";
 import { useTranslation } from "react-i18next";
+import { UserContext } from "../../../../context";
+import ioClient from "../../../../servicesSocket/socket";
 
 
 const MessageForm = ({ channel }) => {
@@ -15,8 +15,10 @@ const MessageForm = ({ channel }) => {
     }}
     onSubmit={(values, { resetForm }) => {
       try {
-        ioClient.emit('newMessage', { body: values.message, channelId: channel.id, username: context.username });
-        resetForm();
+        if(values.message.length > 0) {
+          ioClient.emit('newMessage', { body: values.message, channelId: channel.id, username: context.username });
+          resetForm();
+        }
       }
       catch(e) {
         console.error(e);

@@ -29,13 +29,20 @@ const MainPage = () => {
       return;
     }
     const fetchData = async () => {
-      const {data} = await axios.get('/api/v1/data', { headers: {'Authorization': `Bearer ${context.token}`}});
-      const normalizedData = Normalizer(data.channels);
-      const { channels } = normalizedData.entities;
-      defaultChannel.current = data.channels[0].id;
-
-      dispatch(channelActions.addChannels(channels));
-      dispatch(channelActions.setCurrentChannelId(data.currentChannelId));
+      try {
+        const {data} = await axios.get('/api/v1/data', { headers: {'Authorization': `Bearer ${context.token}`}});
+        const normalizedData = Normalizer(data.channels);
+        const { channels } = normalizedData.entities;
+        defaultChannel.current = data.channels[0].id;
+  
+        dispatch(channelActions.addChannels(channels));
+        dispatch(channelActions.setCurrentChannelId(data.currentChannelId));
+      }
+      catch(e) {
+        console.log(e);
+        toast.error(t('errors.network'));
+      }
+     
     }
 
     fetchData();
