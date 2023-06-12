@@ -1,11 +1,13 @@
 {
   "name": "@hexlet/code",
   "version": "1.0.0",
-  "description": "[![Actions Status](https://github.com/Cristikijian/frontend-project-12/workflows/hexlet-check/badge.svg)](https://github.com/Cristikijian/frontend-project-12/actions)",
+  "description": "chat",
   "main": "index.js",
   "scripts": {
+    "build": "npm run build --prefix frontend",
+    "start": "start-server -s ./frontend/build",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx start-server -s ./frontend/build"
+    "postinstall": "cd frontend && npm ci"
   },
   "repository": {
     "type": "git",
