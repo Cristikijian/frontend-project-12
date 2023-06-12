@@ -1,3 +1,5 @@
+build:
+	make build
 lint-frontend:
 	make -C frontend lint
 install:
