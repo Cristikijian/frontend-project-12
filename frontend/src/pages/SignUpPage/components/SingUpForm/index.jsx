@@ -1,11 +1,11 @@
-import React, { useState, useContext } from 'react';
-import { Formik, Field, Form } from 'formik';
-import { useNavigate } from "react-router-dom";
-import cn from 'classnames';
-import { Button } from 'react-bootstrap';
-import * as Yup from 'yup';
 import axios from 'axios';
+import cn from 'classnames';
+import { Field, Form, Formik } from 'formik';
+import React, { useContext, useState } from 'react';
+import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from "react-router-dom";
+import * as Yup from 'yup';
 import { UserContext } from '../../../../context';
 
 
@@ -51,7 +51,7 @@ const SignUpSchema = Yup.object().shape({
         }
         catch (e) {
           console.log(e, 'err');
-          if(e.message === 'Request failed with status code 409') {
+          if(e.response.status === 409) {
             setError(true);
             console.log(e);
           }
