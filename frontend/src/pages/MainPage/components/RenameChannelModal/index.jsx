@@ -88,7 +88,6 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
               <div>
                 <Field
                   name="channelName"
-                  aria-label={t('channels.channelName')}
                   placeholder={t('channels.channelName')}
                   className={cn('form-control', 'mb-2', {'is-invalid': Boolean(errors.channelName) || customError})}
                   onChange={(e) => {
