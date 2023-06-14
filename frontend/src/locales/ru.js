@@ -60,7 +60,7 @@ const ruLocales = {
     logIn: "Войти в систему",
     registration: "Регистрация",
     typeMessage: "Введите сообщение...",
-    newMessage: "новое сообщение",
+    newMessage: "Новое сообщение",
     loading: "Идёт загрузка",
   },
 };
