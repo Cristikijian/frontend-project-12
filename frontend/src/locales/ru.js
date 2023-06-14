@@ -23,6 +23,7 @@ const ruLocales = {
       renameChannel: "Переименовать канал",
       channelName: "Имя канала",
       delete: "Удалить канал",
+      channelControl: "Управление каналом",
     },
     questions: {
       areYouSure: "Вы уверены?",

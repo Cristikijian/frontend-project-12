@@ -117,7 +117,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
                 {t('buttons.cancel')}
               </Button>
               <Button variant="primary" type="submit" disabled={isLoading}>
-                {t('buttons.send')}
+                {t('buttons.rename')}
               </Button>
             </Modal.Footer>
           </Form>
