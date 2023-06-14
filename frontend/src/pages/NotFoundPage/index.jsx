@@ -13,7 +13,7 @@ const NotFoundPage = () => {
             </div>
           </nav>
         <div className="text-center">
-          <img alt="Страница не найдена" className="img-fluid h-25" src="/notFoundImage.svg" />
+          <img alt={t('notFoundPage')} className="img-fluid h-25" src="/notFoundImage.svg" />
           <h1 className="h4 text-muted">{t('notFoundPage')}</h1>
           <p className="text-muted">{t('canGoTo')} <a href="/">{t('linkToMain')}</a></p>
         </div>

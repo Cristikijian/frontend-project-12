@@ -88,8 +88,8 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
               <div>
                 <Field
                   name="channelName"
-                  aria-label="Имя канала"
-                  placeholder="Имя канала"
+                  aria-label={t('channels.channelName')}
+                  placeholder={t('channels.channelName')}
                   className={cn('form-control', 'mb-2', {'is-invalid': Boolean(errors.channelName) || customError})}
                   onChange={(e) => {
                     setCustomError(false)
@@ -102,6 +102,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
                     setInputRef(el);       
                   }}
                 />
+                <label className="visually-hidden" htmlFor="channelName">{t('channels.channelName')}</label>
                 <div className="invalid-feedback">
                   { errors.channelName }
                   { customError }

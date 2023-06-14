@@ -21,7 +21,7 @@ const ruLocales = {
       channels: "Каналы",
       addChannel: "Добавить канал",
       renameChannel: "Переименовать канал",
-      channelName: "Введите имя канала",
+      channelName: "Имя канала",
       delete: "Удалить канал",
     },
     questions: {
@@ -59,7 +59,8 @@ const ruLocales = {
     signIn: "Войти",
     logIn: "Войти в систему",
     registration: "Регистрация",
-    typeMessage: "Введите сообщение",
+    typeMessage: "Введите сообщение...",
+    newMessage: "новое сообщение",
     loading: "Идёт загрузка",
   },
 };
