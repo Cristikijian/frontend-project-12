@@ -70,7 +70,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
     <Modal show={show}>
       <Formik
         initialValues={{
-          channelName: null,
+          channelName: '',
         }}
         validationSchema={channelNameSchema}
         onSubmit={handleSubmit}
