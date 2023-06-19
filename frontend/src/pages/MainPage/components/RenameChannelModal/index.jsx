@@ -1,7 +1,7 @@
 import axios from "axios";
 import cn from "classnames";
 import { Field, Form, Formik } from "formik";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 import { useTranslation } from "react-i18next";
 import { toast } from "react-toastify";
@@ -11,16 +11,16 @@ import ioClient from "../../../../servicesSocket/socket";
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
   const context = useContext(UserContext);
-  const [ inputRef, setInputRef ] = useState();
+  // const [ inputRef, setInputRef ] = useState();
   const [ customError, setCustomError ] = useState();
   const [ isLoading, setIsLoading ] = useState(false);
 
-  useEffect(() => {
-    if(inputRef) {
-      inputRef.focus();
-      inputRef.select();
-    }
-  }, [inputRef]);
+  // useEffect(() => {
+  //   if(inputRef) {
+  //     inputRef.focus();
+  //     inputRef.select();
+  //   }
+  // }, [inputRef]);
   
   const { t } = useTranslation();
 
@@ -61,7 +61,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       }
     } finally {
       setIsLoading(false);
-      inputRef.reset();
+      // inputRef.reset();
     }
   }
 
@@ -94,12 +94,12 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
                     setCustomError(false)
                     handleChange(e);
                   }}
-                  innerRef={(el) => {
-                    if(!el) {
-                      return;
-                    }
-                    setInputRef(el);       
-                  }}
+                  // innerRef={(el) => {
+                  //   if(!el) {
+                  //     return;
+                  //   }
+                  //   setInputRef(el);       
+                  // }}
                 />
                 <label className="visually-hidden" htmlFor="channelName">{t('channels.channelName')}</label>
                 <div className="invalid-feedback">
