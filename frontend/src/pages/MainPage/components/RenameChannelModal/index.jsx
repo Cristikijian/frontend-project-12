@@ -101,7 +101,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
                     setInputRef(el);       
                   }}
                 />
-                {/* <label className="visually-hidden" htmlFor="channelName">{t('channels.channelName')}</label> */}
+                <label className="visually-hidden" htmlFor="channelName">{t('channels.channelName')}</label>
                 <div className="invalid-feedback">
                   { errors.channelName }
                   { customError }
