@@ -1,8 +1,8 @@
-import React from "react";
-import { useTranslation } from "react-i18next";
+import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 const NotFoundPage = () => {
-  const { t } = useTranslation(); 
+  const { t } = useTranslation();
   return (
     <div className="h-100">
       <div className="h-100" id="chat">
@@ -12,15 +12,19 @@ const NotFoundPage = () => {
               <a className="navbar-brand" href="/">{t('chat')}</a>
             </div>
           </nav>
-        <div className="text-center">
-          <img alt={t('notFoundPage')} className="img-fluid h-25" src="/notFoundImage.svg" />
-          <h1 className="h4 text-muted">{t('notFoundPage')}</h1>
-          <p className="text-muted">{t('canGoTo')} <a href="/">{t('linkToMain')}</a></p>
-        </div>
+          <div className="text-center">
+            <img alt={t('notFoundPage')} className="img-fluid h-25" src="/notFoundImage.svg" />
+            <h1 className="h4 text-muted">{t('notFoundPage')}</h1>
+            <p className="text-muted">
+              {t('canGoTo')}
+              {' '}
+              <a href="/">{t('linkToMain')}</a>
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default NotFoundPage;

@@ -1,14 +1,15 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 const UserContext = React.createContext({});
 
 const UserContextProvider = ({ children }) => {
-  const [ context, setContext ] = useState({
+  const [context, setContext] = useState({
     token: window.localStorage.getItem('token'),
     username: window.localStorage.getItem('username'),
   });
 
   return (
+    // eslint-disable-next-line react/jsx-no-constructed-context-values
     <UserContext.Provider value={{ ...context, setContext }}>
       {children}
     </UserContext.Provider>
