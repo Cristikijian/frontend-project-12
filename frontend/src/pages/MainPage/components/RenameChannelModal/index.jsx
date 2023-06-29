@@ -1,16 +1,15 @@
-import axios from 'axios';
 import cn from 'classnames';
 import { Field, Form, Formik } from 'formik';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../context';
 import ioClient from '../../../../servicesSocket/socket';
+import { selectors as channelSelectors } from '../../../../slices/channelsSlice';
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
-  const context = useContext(UserContext);
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -21,6 +20,8 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       inputRef.select();
     }
   }, [inputRef]);
+
+  const channels = useSelector(channelSelectors.selectAll);
 
   const { t } = useTranslation();
 
@@ -36,22 +37,20 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
     try {
       setIsLoading(true);
       setCustomError(false);
-      const { token } = context;
-      const { data } = await axios.get('/api/v1/data', { headers: { Authorization: `Bearer ${token}` } });
 
       if (channel.name === values.channelName) {
         onHide();
         return;
       }
-      if (data.channels.some((ch) => ch.name === values.channelName)) {
+      if (channels.some((ch) => ch.name === values.channelName)) {
         setCustomError(t('errors.uniq'));
         return;
       }
 
-      ioClient.emit('renameChannel', { id: channel.id, name: values.channelName });
-
-      resetForm();
-      onHide();
+      ioClient.emit('renameChannel', { id: channel.id, name: values.channelName }, () => {
+        resetForm();
+        onHide();
+      });
     } catch (e) {
       console.error(e, e.code, e.message);
       if (e.message === 'Network Error') {

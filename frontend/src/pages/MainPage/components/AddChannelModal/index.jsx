@@ -7,14 +7,14 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { UserContext } from '../../../../context';
+import { apiRoutes } from '../../../../routes';
 import ioClient from '../../../../servicesSocket/socket';
 
 const AddChannelModal = ({ show, onHide }) => {
-  const context = useContext(UserContext);
+  const { token, username } = useContext(UserContext);
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const { token, username } = context;
 
   useEffect(() => {
     if (inputRef) {
@@ -34,7 +34,7 @@ const AddChannelModal = ({ show, onHide }) => {
       setIsLoading(true);
       setCustomError(false);
 
-      const { data } = await axios.get('/api/v1/data', { headers: { Authorization: `Bearer ${token}` } });
+      const { data } = await axios.get(apiRoutes.channels, { headers: { Authorization: `Bearer ${token}` } });
 
       if (data.channels.some((channel) => channel.name === values.channelName)) {
         setCustomError(t('errors.uniq'));

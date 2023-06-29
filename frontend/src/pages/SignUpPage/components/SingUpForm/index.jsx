@@ -7,10 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { UserContext } from '../../../../context';
+import { apiRoutes } from '../../../../routes';
 
 const SignUpForm = () => {
   const [userCreationError, setError] = useState(false);
-  const context = useContext(UserContext);
+  const { setContext } = useContext(UserContext);
   const navigate = useNavigate();
 
   const { t } = useTranslation();
@@ -39,10 +40,11 @@ const SignUpForm = () => {
       validationSchema={SignUpSchema}
       onSubmit={async (values) => {
         try {
-          const response = await axios.post('/api/v1/signup', { username: values.username, password: values.password });
-          const { setContext } = context;
+          const response = await axios.post(
+            apiRoutes.signUp,
+            { username: values.username, password: values.password },
+          );
           setContext({ token: response.data.token, username: response.data.username });
-          console.log(context);
           window.localStorage.setItem('token', response.data.token);
           window.localStorage.setItem('username', response.data.username);
           if (response.statusText === 'Created') {

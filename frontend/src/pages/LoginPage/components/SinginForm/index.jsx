@@ -5,9 +5,10 @@ import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import { UserContext } from '../../../../context';
+import { apiRoutes } from '../../../../routes';
 
 const SinginForm = () => {
-  const context = useContext(UserContext);
+  const { setContext } = useContext(UserContext);
   const [signInError, setError] = useState();
   const { t } = useTranslation();
 
@@ -26,8 +27,7 @@ const SinginForm = () => {
       validationSchema={SigninSchema}
       onSubmit={async (values) => {
         try {
-          const response = await axios.post('/api/v1/login', values);
-          const { setContext } = context;
+          const response = await axios.post(apiRoutes.login, values);
           setContext({ token: response.data.token, username: response.data.username });
           console.log(response.data);
           window.localStorage.setItem('token', response.data.token);

@@ -5,10 +5,9 @@ import { UserContext } from '../../context';
 import SinginForm from './components/SinginForm';
 
 const LoginPage = () => {
-  const context = useContext(UserContext);
+  const { token } = useContext(UserContext);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { token } = context;
   useEffect(() => {
     if (token) {
       navigate('/');

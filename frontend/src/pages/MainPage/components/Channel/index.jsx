@@ -6,11 +6,10 @@ import { UserContext } from '../../../../context';
 const Channel = ({
   channel, currentChannel, onChannelSelect, onChannelRemove, onChannelRename,
 }) => {
-  const context = useContext(UserContext);
+  const { username } = useContext(UserContext);
   const { t } = useTranslation();
 
   const isActive = channel.id === currentChannel.id;
-  const { username } = context;
   return (
     <li className="nav-item w-100" key={channel.name}>
       {channel.author !== username

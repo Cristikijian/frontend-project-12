@@ -5,9 +5,8 @@ import { UserContext } from '../../../../context';
 import ioClient from '../../../../servicesSocket/socket';
 
 const MessageForm = ({ channel }) => {
-  const context = useContext(UserContext);
+  const { username } = useContext(UserContext);
   const { t } = useTranslation();
-  const { username } = context;
 
   return (
     <Formik

@@ -4,12 +4,11 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../context';
+import { apiRoutes } from '../../routes';
 import ioClient from '../../servicesSocket/socket';
 import { actions as channelActions, selectors as channelSelectors } from '../../slices/channelsSlice';
-import Normalizer from '../../utils/normalizer';
 import AddChannelModal from './components/AddChannelModal';
 import Channel from './components/Channel';
 import ChatContainer from './components/ChatContainer';
@@ -17,28 +16,21 @@ import DeleteChannelModal from './components/DeleteChannelModal';
 import RenameChannelModal from './components/RenameChannelModal';
 
 const MainPage = () => {
-  const context = useContext(UserContext);
+  const { token } = useContext(UserContext);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { t } = useTranslation();
-  const { token } = context;
 
   const channels = useSelector(channelSelectors.selectAll);
   const defaultChannel = useRef(null);
 
   useEffect(() => {
-    if (!token) {
-      navigate('login');
-      return;
-    }
     const fetchData = async () => {
       try {
-        const { data } = await axios.get('/api/v1/data', { headers: { Authorization: `Bearer ${token}` } });
-        const normalizedData = Normalizer(data.channels);
-        const { channels: ch } = normalizedData.entities;
+        const { data } = await axios.get(apiRoutes.channels, { headers: { Authorization: `Bearer ${token}` } });
+
         defaultChannel.current = data.channels[0].id;
 
-        dispatch(channelActions.addChannels(ch));
+        dispatch(channelActions.addChannels(data.channels));
         dispatch(channelActions.setCurrentChannelId(data.currentChannelId));
       } catch (e) {
         console.log(e);
