@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../../context';
 import { appRoutes } from '../../routes';
 
-const PrivateRoute = (props) => {
+const PrivateRoute = ({ children }) => {
   const { token } = useContext(UserContext);
   const navigate = useNavigate();
   useEffect(() => {
@@ -11,7 +11,7 @@ const PrivateRoute = (props) => {
       navigate(appRoutes.login);
     }
   });
-  return props.children;
+  return token ? children : null;
 };
 
 export default PrivateRoute;

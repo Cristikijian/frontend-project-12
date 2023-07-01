@@ -7,7 +7,6 @@ const initialState = channelsAdapter.getInitialState({
 
 const channelsSlice = createSlice({
   name: 'channels',
-  author: '',
   initialState,
   reducers: {
     addChannel: channelsAdapter.addOne,
@@ -23,6 +22,7 @@ const channelsSlice = createSlice({
 
 export const { actions } = channelsSlice;
 export const selectors = channelsAdapter.getSelectors(
-  (state) => state.channels,
+  // eslint-disable-next-line comma-dangle
+  (state) => state.channels
 );
 export default channelsSlice.reducer;

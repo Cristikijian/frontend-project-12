@@ -1,18 +1,23 @@
+import axios from 'axios';
 import cn from 'classnames';
 import { Field, Form, Formik } from 'formik';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
+import { UserContext } from '../../../../context';
+import { apiRoutes } from '../../../../routes';
 import ioClient from '../../../../servicesSocket/socket';
 import { selectors as channelSelectors } from '../../../../slices/channelsSlice';
 
-const RenameChannelModal = ({ show, onHide, channel }) => {
+const RenameChannelModal = ({ show, onHide }) => {
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
   const [isLoading, setIsLoading] = useState(false);
+  const { actionType, channel } = useSelector((state) => state.modalWindow);
+  const { token } = useContext(UserContext);
 
   useEffect(() => {
     if (inputRef) {
@@ -25,10 +30,6 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
 
   const { t } = useTranslation();
 
-  if (!channel) {
-    return null;
-  }
-
   const channelNameSchema = Yup.object().shape({
     channelName: Yup.string().required(t('errors.required')),
   });
@@ -38,19 +39,43 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       setIsLoading(true);
       setCustomError(false);
 
-      if (channel.name === values.channelName) {
-        onHide();
-        return;
-      }
-      if (channels.some((ch) => ch.name === values.channelName)) {
-        setCustomError(t('errors.uniq'));
-        return;
-      }
+      switch (actionType) {
+        case 'add': {
+          const { data } = await axios.get(apiRoutes.channels, { headers: { Authorization: `Bearer ${token}` } });
 
-      ioClient.emit('renameChannel', { id: channel.id, name: values.channelName }, () => {
-        resetForm();
-        onHide();
-      });
+          if (data.channels.some((c) => c.name === values.channelName)) {
+            setCustomError(t('errors.uniq'));
+            return;
+          }
+
+          const newChannel = { name: values.channelName, author: values.author };
+          ioClient.emit('newChannel', newChannel);
+          resetForm();
+          onHide();
+          break;
+        }
+
+        case 'rename':
+          if (channel.name === values.channelName) {
+            onHide();
+            return;
+          }
+          if (channels.some((ch) => ch.name === values.channelName)) {
+            setCustomError(t('errors.uniq'));
+            return;
+          }
+
+          ioClient.emit('renameChannel', { id: channel.id, name: values.channelName }, () => {
+            resetForm();
+            onHide();
+          });
+          break;
+        case 'remove':
+          ioClient.emit('removeChannel', channel.id);
+          onHide();
+          break;
+        default: return;
+      }
     } catch (e) {
       console.error(e, e.code, e.message);
       if (e.message === 'Network Error') {
@@ -81,7 +106,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
                 onHide();
               }}
             >
-              <Modal.Title>{t('channels.renameChannel')}</Modal.Title>
+              <Modal.Title>{t(`channelModal.title.${actionType}`)}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <div>
@@ -119,7 +144,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
                 {t('buttons.cancel')}
               </Button>
               <Button variant="primary" type="submit" disabled={isLoading}>
-                {t('buttons.rename')}
+                {t(`channelModal.buttons.${actionType}`)}
               </Button>
             </Modal.Footer>
           </Form>

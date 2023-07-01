@@ -1,6 +1,18 @@
 const ruLocales = {
   translation: {
     chat: 'Hexlet Chat',
+    channelModal: {
+      title: {
+        add: 'Добавить канал',
+        rename: 'Переименовать канал',
+        remove: 'Удалить канал',
+      },
+      buttons: {
+        send: 'Отправить',
+        remove: 'Удалить',
+        add: 'Отправить',
+      },
+    },
     buttons: {
       logout: 'Выйти',
       signin: 'Войти',

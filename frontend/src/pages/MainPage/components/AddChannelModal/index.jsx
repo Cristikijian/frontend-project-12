@@ -38,7 +38,6 @@ const AddChannelModal = ({ show, onHide }) => {
 
       if (data.channels.some((channel) => channel.name === values.channelName)) {
         setCustomError(t('errors.uniq'));
-        console.log(customError);
         return;
       }
 
@@ -54,7 +53,6 @@ const AddChannelModal = ({ show, onHide }) => {
       }
     } finally {
       setIsLoading(false);
-      console.log(inputRef);
       inputRef.reset();
     }
   };
