@@ -10,11 +10,11 @@ const modalWindowSlice = createSlice({
   name: 'modalWindow',
   initialState,
   reducers: {
-    setChannel: ({ payload }) => ({
+    setChannel: (state, { payload }) => ({
       channel: payload.channel,
       actionType: payload.actionType,
     }),
-    clearChannel: () => initialState,
+    clearChannel: (state) => ({ channel: null, actionType: state.actionType }),
   },
 });
 

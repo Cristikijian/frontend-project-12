@@ -3,21 +3,23 @@ import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 import { UserContext } from '../../../../context';
-import { actions as modalWindowActions } from '../../../slices/channelsSlice';
+import { actions as channelActions } from '../../../../slices/channelsSlice';
+import { actions as modalWindowActions } from '../../../../slices/modalWindowSlice';
 
-const Channel = ({
-  channel, currentChannel, onChannelSelect,
-}) => {
+const Channel = ({ channel, currentChannel }) => {
   const { username } = useContext(UserContext);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const handleChannelSelect = (id) => {
+    dispatch(channelActions.setCurrentChannelId(id));
+  };
 
   const isActive = channel.id === currentChannel.id;
   return (
     <li className="nav-item w-100" key={channel.name}>
       {channel.author !== username
       && (
-      <Button className="w-100 rounded-0 text-start btn" variant={isActive ? 'secondary' : 'default'} onClick={() => onChannelSelect(channel.id)}>
+      <Button className="w-100 rounded-0 text-start btn" variant={isActive ? 'secondary' : 'default'} onClick={() => handleChannelSelect(channel.id)}>
         <span className="me-1">#</span>
         {channel.name}
       </Button>
@@ -25,7 +27,7 @@ const Channel = ({
       {channel.author === username
        && (
        <Dropdown as={ButtonGroup} className="d-flex dropdown btn-group">
-         <Button variant={isActive ? 'secondary' : ''} className="rounded-0 w-100 text-start text-truncate" onClick={() => onChannelSelect(channel.id)}>
+         <Button variant={isActive ? 'secondary' : ''} className="rounded-0 w-100 text-start text-truncate" onClick={() => handleChannelSelect(channel.id)}>
            <span className="me-1">#</span>
            {channel.name}
          </Button>

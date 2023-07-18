@@ -4,20 +4,24 @@ import { Field, Form, Formik } from 'formik';
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { UserContext } from '../../../../context';
 import { apiRoutes } from '../../../../routes';
 import ioClient from '../../../../servicesSocket/socket';
 import { selectors as channelSelectors } from '../../../../slices/channelsSlice';
+import { actions as modalWindowActions } from '../../../../slices/modalWindowSlice';
 
-const RenameChannelModal = ({ show, onHide }) => {
+const ChannelModal = () => {
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
   const [isLoading, setIsLoading] = useState(false);
-  const { actionType, channel } = useSelector((state) => state.modalWindow);
-  const { token } = useContext(UserContext);
+  const { actionType, channel } = useSelector(
+    (state) => { console.log(state); return state.modalWindow; },
+  );
+  const { token, username } = useContext(UserContext);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (inputRef) {
@@ -34,6 +38,11 @@ const RenameChannelModal = ({ show, onHide }) => {
     channelName: Yup.string().required(t('errors.required')),
   });
 
+  const handleClose = () => {
+    dispatch(modalWindowActions.clearChannel());
+    setCustomError(false);
+  };
+
   const handleSubmit = async (values, { resetForm }) => {
     try {
       setIsLoading(true);
@@ -48,16 +57,16 @@ const RenameChannelModal = ({ show, onHide }) => {
             return;
           }
 
-          const newChannel = { name: values.channelName, author: values.author };
-          ioClient.emit('newChannel', newChannel);
-          resetForm();
-          onHide();
+          const newChannel = { name: values.channelName, author: username };
+          ioClient.emit('newChannel', newChannel, () => {
+            resetForm();
+            handleClose();
+          });
           break;
         }
 
         case 'rename':
           if (channel.name === values.channelName) {
-            onHide();
             return;
           }
           if (channels.some((ch) => ch.name === values.channelName)) {
@@ -67,12 +76,11 @@ const RenameChannelModal = ({ show, onHide }) => {
 
           ioClient.emit('renameChannel', { id: channel.id, name: values.channelName }, () => {
             resetForm();
-            onHide();
+            handleClose();
           });
           break;
         case 'remove':
-          ioClient.emit('removeChannel', channel.id);
-          onHide();
+          ioClient.emit('removeChannel', channel.id, handleClose);
           break;
         default: return;
       }
@@ -89,7 +97,7 @@ const RenameChannelModal = ({ show, onHide }) => {
   };
 
   return (
-    <Modal show={show}>
+    <Modal show={Boolean(channel)}>
       <Formik
         initialValues={{
           channelName: '',
@@ -101,52 +109,60 @@ const RenameChannelModal = ({ show, onHide }) => {
           <Form>
             <Modal.Header
               closeButton
-              onHide={() => {
-                setCustomError(false);
-                onHide();
-              }}
+              onHide={handleClose}
             >
               <Modal.Title>{t(`channelModal.title.${actionType}`)}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
               <div>
-                <Field
-                  name="channelName"
-                  // placeholder={t('channels.channelName')}
-                  id="channelName"
-                  className={cn('form-control', 'mb-2', { 'is-invalid': Boolean(errors.channelName) || customError })}
-                  onChange={(e) => {
-                    setCustomError(false);
-                    handleChange(e);
-                  }}
-                  innerRef={(el) => {
-                    if (!el) {
-                      return;
-                    }
-                    setInputRef(el);
-                  }}
-                />
+                {actionType !== 'remove' ? (
+                  <Field
+                    name="channelName"
+                    placeholder={t('channels.channelName')}
+                    id="channelName"
+                    className={cn('form-control', 'mb-2', { 'is-invalid': Boolean(errors.channelName) || customError })}
+                    onChange={(e) => {
+                      setCustomError(false);
+                      handleChange(e);
+                    }}
+                    innerRef={(el) => {
+                      if (!el) {
+                        return;
+                      }
+                      setInputRef(el);
+                    }}
+                  />
+                ) : (
+                  <div>
+                    <p className="lead">{t('questions.areYouSure')}</p>
+                    <div className="invalid-feedback" />
+                  </div>
+                )}
+
                 <label className="visually-hidden" htmlFor="channelName">{t('channels.channelName')}</label>
                 <div className="invalid-feedback">
                   { errors.channelName }
                   { customError }
                 </div>
               </div>
+              <div className="d-flex justify-content-end">
+                <Button
+                  variant="secondary"
+                  className="me-2"
+                  onClick={handleClose}
+                >
+                  {t('buttons.cancel')}
+                </Button>
+                <Button
+                  variant={actionType === 'remove' ? 'danger' : 'primary'}
+                  type="submit"
+                  disabled={isLoading}
+                >
+                  {t(`channelModal.buttons.${actionType}`)}
+                </Button>
+              </div>
             </Modal.Body>
-            <Modal.Footer>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  onHide();
-                  setCustomError(false);
-                }}
-              >
-                {t('buttons.cancel')}
-              </Button>
-              <Button variant="primary" type="submit" disabled={isLoading}>
-                {t(`channelModal.buttons.${actionType}`)}
-              </Button>
-            </Modal.Footer>
+
           </Form>
         )}
       </Formik>
@@ -154,4 +170,4 @@ const RenameChannelModal = ({ show, onHide }) => {
   );
 };
 
-export default RenameChannelModal;
+export default ChannelModal;

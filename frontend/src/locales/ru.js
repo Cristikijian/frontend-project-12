@@ -8,7 +8,7 @@ const ruLocales = {
         remove: 'Удалить канал',
       },
       buttons: {
-        send: 'Отправить',
+        rename: 'Отправить',
         remove: 'Удалить',
         add: 'Отправить',
       },
