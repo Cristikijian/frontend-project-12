@@ -9,9 +9,9 @@ import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { UserContext } from '../../../../context';
 import { apiRoutes } from '../../../../routes';
-import ioClient from '../../../../servicesSocket/socket';
 import { selectors as channelSelectors } from '../../../../slices/channelsSlice';
 import { actions as modalWindowActions } from '../../../../slices/modalWindowSlice';
+import sockets from '../../../../sockets';
 
 const ChannelModal = () => {
   const [inputRef, setInputRef] = useState();
@@ -47,6 +47,7 @@ const ChannelModal = () => {
     try {
       setIsLoading(true);
       setCustomError(false);
+      console.log(actionType, channel.id);
 
       switch (actionType) {
         case 'add': {
@@ -58,7 +59,7 @@ const ChannelModal = () => {
           }
 
           const newChannel = { name: values.channelName, author: username };
-          ioClient.emit('newChannel', newChannel, () => {
+          sockets.addChannel(newChannel, () => {
             resetForm();
             handleClose();
           });
@@ -74,13 +75,13 @@ const ChannelModal = () => {
             return;
           }
 
-          ioClient.emit('renameChannel', { id: channel.id, name: values.channelName }, () => {
+          sockets.renameChannel({ id: channel.id, name: values.channelName }, () => {
             resetForm();
             handleClose();
           });
           break;
         case 'remove':
-          ioClient.emit('removeChannel', channel.id, handleClose);
+          sockets.removeChannel(channel.id, handleClose);
           break;
         default: return;
       }
@@ -100,7 +101,7 @@ const ChannelModal = () => {
     <Modal show={Boolean(channel)}>
       <Formik
         initialValues={{
-          channelName: '',
+          channelName: channel ? channel.name : '',
         }}
         validationSchema={channelNameSchema}
         onSubmit={handleSubmit}

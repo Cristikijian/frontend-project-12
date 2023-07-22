@@ -4,20 +4,22 @@ import React, {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { UserContext } from '../../context';
-import { apiRoutes } from '../../routes';
-import ioClient from '../../servicesSocket/socket';
+import { apiRoutes, appRoutes } from '../../routes';
 import { actions as channelActions, selectors as channelSelectors } from '../../slices/channelsSlice';
 import { actions as modalWindowActions } from '../../slices/modalWindowSlice';
+import sockets from '../../sockets';
 import Channel from './components/Channel';
 import ChannelModal from './components/ChannelModal';
 import ChatContainer from './components/ChatContainer';
 
 const MainPage = () => {
-  const { token } = useContext(UserContext);
+  const { token, setContext } = useContext(UserContext);
   const dispatch = useDispatch();
   const { t } = useTranslation();
+  const navigate = useNavigate();
 
   const channels = useSelector(channelSelectors.selectAll);
   const defaultChannel = useRef(null);
@@ -32,26 +34,29 @@ const MainPage = () => {
         dispatch(channelActions.addChannels(data.channels));
         dispatch(channelActions.setCurrentChannelId(data.currentChannelId));
       } catch (e) {
-        console.log(e);
+        if (e.response.status === 401) {
+          setContext({ token: null, username: null });
+          navigate(appRoutes.login);
+          return;
+        }
         toast.error(t('errors.network'));
       }
     };
 
     fetchData();
 
-    ioClient.on('removeChannel', (payload) => {
+    sockets.onRemoveChannel((payload) => {
       dispatch(channelActions.setCurrentChannelId(defaultChannel.current));
       dispatch(channelActions.removeChannel(payload.id));
       toast.success(t('toasts.delete'));
     });
 
-    ioClient.on('renameChannel', (payload) => {
-      console.log(payload);
+    sockets.onRenameChannel((payload) => {
       dispatch(channelActions.updateChannel({ id: payload.id, changes: { name: payload.name } }));
       toast.success(t('toasts.rename'));
     });
 
-    ioClient.on('newChannel', (payload) => {
+    sockets.onAddChannel((payload) => {
       dispatch(channelActions.setCurrentChannelId(payload.id));
       dispatch(channelActions.addChannel(payload));
       toast.success(t('toasts.add'));

@@ -1,5 +1,5 @@
 const rollbarConfig = {
-  accessToken: '397c540dd0ee40e186bb58c5b39e301a',
+  accessToken: process.env.ROLLBAR_TOKEN,
   payload: {
     environment: 'production',
   },

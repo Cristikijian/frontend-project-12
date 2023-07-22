@@ -11,7 +11,7 @@ import { apiRoutes } from '../../../../routes';
 
 const SignUpForm = () => {
   const [userCreationError, setError] = useState(false);
-  const { setContext } = useContext(UserContext);
+  const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
 
   const { t } = useTranslation();
@@ -44,19 +44,10 @@ const SignUpForm = () => {
             apiRoutes.signUp,
             { username: values.username, password: values.password },
           );
-          setContext({ token: response.data.token, username: response.data.username });
-          window.localStorage.setItem('token', response.data.token);
-          window.localStorage.setItem('username', response.data.username);
-          if (response.statusText === 'Created') {
-            navigate('/');
-          }
-          console.log(response);
+          updateUser(response.data.token, response.data.username);
+          navigate('/');
         } catch (e) {
-          console.log(e, 'err');
-          if (e.response.status === 409) {
-            setError(true);
-            console.log(e);
-          }
+          setError(true);
         }
       }}
     >

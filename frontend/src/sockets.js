@@ -3,28 +3,28 @@ import { io } from 'socket.io-client';
 const ioClient = io();
 
 const sockets = {
-  ioClient.on('removeChannel', (payload) => {
-    dispatch(channelActions.setCurrentChannelId(defaultChannel.current));
-    dispatch(channelActions.removeChannel(payload.id));
-    toast.success(t('toasts.delete'));
-  });
+  addChannel: (newChannel, cb) => {
+    ioClient.emit('newChannel', newChannel, cb);
+  },
 
-  ioClient.on('renameChannel', (payload) => {
-    console.log(payload);
-    dispatch(channelActions.updateChannel({ id: payload.id, changes: { name: payload.name } }));
-    toast.success(t('toasts.rename'));
-  });
+  onAddChannel: (cb) => {
+    ioClient.on('newChannel', cb);
+  },
 
-  ioClient.on('newChannel', (payload) => {
-    dispatch(channelActions.setCurrentChannelId(payload.id));
-    dispatch(channelActions.addChannel(payload));
-    toast.success(t('toasts.add'));
-  });
+  removeChannel: (id, cb) => {
+    ioClient.emit('removeChannel', { id }, cb);
+  },
 
-  ioClient.emit('newChannel', newChannel);
+  onRemoveChannel: (cb) => {
+    ioClient.on('removeChannel', cb);
+  },
 
-  ioClient.emit('removeChannel', { id });
+  renameChannel: (data, cb) => {
+    ioClient.emit('renameChannel', data, cb);
+  },
 
-  ioClient.emit('renameChannel', { id: channel.id, name: values.channelName }, cb)
+  onRenameChannel: (cb) => {
+    ioClient.on('renameChannel', cb);
+  },
 };
 export default sockets;
