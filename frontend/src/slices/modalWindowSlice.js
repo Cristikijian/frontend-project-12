@@ -3,18 +3,21 @@ import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 const modalWindowAdapter = createEntityAdapter();
 const initialState = modalWindowAdapter.getInitialState({
   channel: null,
-  actionType: null,
+  modalType: null,
 });
 
 const modalWindowSlice = createSlice({
   name: 'modalWindow',
   initialState,
   reducers: {
-    setChannel: (state, { payload }) => ({
-      channel: payload.channel,
-      actionType: payload.actionType,
+    setModalType: (state, { payload }) => ({
+      ...state,
+      modalType: payload.modalType,
     }),
-    clearChannel: (state) => ({ channel: null, actionType: state.actionType }),
+    setIsOpening: (state, { payload }) => ({
+      ...state,
+      isOpening: payload,
+    }),
   },
 });
 

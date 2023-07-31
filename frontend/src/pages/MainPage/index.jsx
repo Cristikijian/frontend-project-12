@@ -57,6 +57,7 @@ const MainPage = () => {
     });
 
     sockets.onAddChannel((payload) => {
+      console.log(payload);
       dispatch(channelActions.setCurrentChannelId(payload.id));
       dispatch(channelActions.addChannel(payload));
       toast.success(t('toasts.add'));
@@ -71,7 +72,9 @@ const MainPage = () => {
   });
 
   const openAddChannelModal = () => {
-    dispatch(modalWindowActions.setChannel({ channel: {}, actionType: 'add' }));
+    console.log('gggghg');
+    dispatch(modalWindowActions.setModalType({ modalType: 'add' }));
+    dispatch(modalWindowActions.setIsOpening(true));
   };
 
   return (

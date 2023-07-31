@@ -35,8 +35,25 @@ const Channel = ({ channel, currentChannel }) => {
            <span className="visually-hidden">{t('channels.channelControl')}</span>
          </Dropdown.Toggle>
          <Dropdown.Menu>
-           <Dropdown.Item eventKey="1" onClick={() => dispatch(modalWindowActions.setChannel({ channel, actionType: 'remove' }))}>{t('buttons.delete')}</Dropdown.Item>
-           <Dropdown.Item eventKey="2" onClick={() => dispatch(modalWindowActions.setChannel({ channel, actionType: 'rename' }))}>{t('buttons.rename')}</Dropdown.Item>
+           <Dropdown.Item
+             eventKey="1"
+             onClick={() => {
+               dispatch(modalWindowActions.setModalType({ modalType: 'remove' }));
+               dispatch(modalWindowActions.setIsOpening(true));
+             }}
+           >
+             {t('buttons.delete')}
+
+           </Dropdown.Item>
+           <Dropdown.Item
+             eventKey="2"
+             onClick={() => {
+               dispatch(modalWindowActions.setModalType({ modalType: 'rename' }));
+               dispatch(modalWindowActions.setIsOpening({ isOpening: true }));
+             }}
+           >
+             {t('buttons.rename')}
+           </Dropdown.Item>
          </Dropdown.Menu>
        </Dropdown>
        )}

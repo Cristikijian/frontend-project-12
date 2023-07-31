@@ -1,7 +1,5 @@
-import {
-  createSlice,
-  createEntityAdapter,
-} from '@reduxjs/toolkit';
+/* eslint-disable comma-dangle */
+import { createEntityAdapter, createSlice } from '@reduxjs/toolkit';
 import { actions as channelActions } from './channelsSlice';
 
 const messagesAdapter = createEntityAdapter();
@@ -20,11 +18,12 @@ const messagesSlice = createSlice({
       const allEntities = Object.values(state.entities);
       const restEntities = allEntities.filter((e) => e.channelId !== channelId);
       messagesAdapter.setAll(state, restEntities);
-      console.log(restEntities);
     });
   },
 });
 
 export const { actions } = messagesSlice;
-export const selectors = messagesAdapter.getSelectors((state) => state.messages);
+export const selectors = messagesAdapter.getSelectors(
+  (state) => state.messages
+);
 export default messagesSlice.reducer;
