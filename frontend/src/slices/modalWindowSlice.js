@@ -18,6 +18,10 @@ const modalWindowSlice = createSlice({
       ...state,
       isOpening: payload,
     }),
+    setChannel: (state, { payload }) => ({
+      ...state,
+      channel: payload,
+    }),
   },
 });
 

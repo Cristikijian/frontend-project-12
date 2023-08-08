@@ -24,6 +24,11 @@ const MainPage = () => {
   const channels = useSelector(channelSelectors.selectAll);
   const defaultChannel = useRef(null);
 
+  const currentChannel = useSelector((state) => {
+    const { currentChannelId } = state.channels;
+    return channelSelectors.selectById(state, currentChannelId);
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -46,9 +51,11 @@ const MainPage = () => {
     fetchData();
 
     sockets.onRemoveChannel((payload) => {
-      dispatch(channelActions.setCurrentChannelId(defaultChannel.current));
+      // if (payload.id === currentChannel.id) { current channel is undefined
+      // dispatch(channelActions.setCurrentChannelId(defaultChannel.current));
+      // }
+
       dispatch(channelActions.removeChannel(payload.id));
-      toast.success(t('toasts.delete'));
     });
 
     sockets.onRenameChannel((payload) => {
@@ -66,20 +73,14 @@ const MainPage = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const currentChannel = useSelector((state) => {
-    const { currentChannelId } = state.channels;
-    return channelSelectors.selectById(state, currentChannelId);
-  });
-
   const openAddChannelModal = () => {
-    console.log('gggghg');
     dispatch(modalWindowActions.setModalType({ modalType: 'add' }));
     dispatch(modalWindowActions.setIsOpening(true));
   };
 
   return (
     <>
-      <ChannelModal />
+      <ChannelModal defaultChannel={defaultChannel.current} />
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
         <div className="row h-100 bg-white flex-md-row">
           <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">

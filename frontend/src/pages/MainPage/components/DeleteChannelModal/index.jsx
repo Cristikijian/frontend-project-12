@@ -1,19 +1,29 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import ioClient from '../../../../servicesSocket/socket';
+import { toast } from 'react-toastify';
 
-const DeleteChannelModal = ({ show, onHide, id }) => {
+import sockets from '../../../../sockets';
+
+const DeleteChannelModal = ({
+  show, onHide, id,
+}) => {
   const { t } = useTranslation();
 
   const handleChannelRemove = () => {
     try {
-      ioClient.emit('removeChannel', { id });
-      onHide();
+      sockets.removeChannel(id, onHide);
     } catch {
-      console.log('Error');
+      toast.error(t('errors.network'));
     }
   };
+
+  useEffect(() => {
+    sockets.onRemoveChannel(() => {
+      toast.success(t('toasts.delete'));
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id]);
 
   return (
     <Modal show={show}>

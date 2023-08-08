@@ -40,6 +40,7 @@ const Channel = ({ channel, currentChannel }) => {
              onClick={() => {
                dispatch(modalWindowActions.setModalType({ modalType: 'remove' }));
                dispatch(modalWindowActions.setIsOpening(true));
+               dispatch(modalWindowActions.setChannel(channel));
              }}
            >
              {t('buttons.delete')}
@@ -49,7 +50,8 @@ const Channel = ({ channel, currentChannel }) => {
              eventKey="2"
              onClick={() => {
                dispatch(modalWindowActions.setModalType({ modalType: 'rename' }));
-               dispatch(modalWindowActions.setIsOpening({ isOpening: true }));
+               dispatch(modalWindowActions.setIsOpening(true));
+               dispatch(modalWindowActions.setChannel(channel));
              }}
            >
              {t('buttons.rename')}

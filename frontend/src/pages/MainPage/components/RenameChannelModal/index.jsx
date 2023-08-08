@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { UserContext } from '../../../../context';
-import ioClient from '../../../../servicesSocket/socket';
+import sockets from '../../../../sockets';
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
   const { token } = useContext(UserContext);
@@ -48,7 +48,9 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
         return;
       }
 
-      ioClient.emit('renameChannel', { id: channel.id, name: values.channelName });
+      sockets.onRenameChannel({ id: channel.id, name: values.channelName }, () => {
+        toast.success(t('toasts.rename'));
+      });
 
       resetForm();
       onHide();
