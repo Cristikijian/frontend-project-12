@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context';
+import { UserContext } from '../../authContext';
 
 const Header = () => {
   const context = useContext(UserContext);

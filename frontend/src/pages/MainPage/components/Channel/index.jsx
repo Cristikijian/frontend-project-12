@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { UserContext } from '../../../../context';
+import { UserContext } from '../../../../authContext';
 import { actions as channelActions } from '../../../../slices/channelsSlice';
 import { actions as modalWindowActions } from '../../../../slices/modalWindowSlice';
 

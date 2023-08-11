@@ -6,17 +6,18 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { UserContext } from '../../context';
+import { UserContext } from '../../authContext';
 import { apiRoutes, appRoutes } from '../../routes';
 import { actions as channelActions, selectors as channelSelectors } from '../../slices/channelsSlice';
 import { actions as modalWindowActions } from '../../slices/modalWindowSlice';
-import sockets from '../../sockets';
+import { SocketsContext } from '../../socketsContext';
 import Channel from './components/Channel';
 import ChannelModal from './components/ChannelModal';
 import ChatContainer from './components/ChatContainer';
 
 const MainPage = () => {
   const { token, setContext } = useContext(UserContext);
+  const { onRemoveChannel, onRenameChannel, onAddChannel } = useContext(SocketsContext);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -50,7 +51,7 @@ const MainPage = () => {
 
     fetchData();
 
-    sockets.onRemoveChannel((payload) => {
+    onRemoveChannel((payload) => {
       // if (payload.id === currentChannel.id) { current channel is undefined
       // dispatch(channelActions.setCurrentChannelId(defaultChannel.current));
       // }
@@ -58,12 +59,12 @@ const MainPage = () => {
       dispatch(channelActions.removeChannel(payload.id));
     });
 
-    sockets.onRenameChannel((payload) => {
+    onRenameChannel((payload) => {
       dispatch(channelActions.updateChannel({ id: payload.id, changes: { name: payload.name } }));
       toast.success(t('toasts.rename'));
     });
 
-    sockets.onAddChannel((payload) => {
+    onAddChannel((payload) => {
       console.log(payload);
       dispatch(channelActions.setCurrentChannelId(payload.id));
       dispatch(channelActions.addChannel(payload));

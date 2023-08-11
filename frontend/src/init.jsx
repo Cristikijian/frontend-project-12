@@ -9,8 +9,10 @@ import App from './App';
 import './index.css';
 import resources from './locales/index.js';
 import store from './slices';
+import getSockets from './sockets';
 
 const init = () => {
+  const sockets = getSockets();
   const ruDict = leoProfanity.getDictionary('ru');
   leoProfanity.add(ruDict);
 
@@ -23,7 +25,7 @@ const init = () => {
   const root = ReactDOM.createRoot(document.getElementById('root'));
   root.render(
     <Provider store={store}>
-      <App i18n={i18n} />
+      <App i18n={i18n} sockets={sockets} />
     </Provider>,
   );
 };

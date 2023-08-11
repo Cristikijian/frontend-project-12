@@ -1,7 +1,7 @@
 import { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../context';
+import { UserContext } from '../../authContext';
 import SinginForm from './components/SinginForm';
 
 const LoginPage = () => {

@@ -4,7 +4,7 @@ import { Field, Form, Formik } from 'formik';
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../context';
+import { UserContext } from '../../../../authContext';
 import { apiRoutes } from '../../../../routes';
 
 const SinginForm = () => {

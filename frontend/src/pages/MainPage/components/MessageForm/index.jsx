@@ -1,11 +1,12 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UserContext } from '../../../../context';
-import ioClient from '../../../../servicesSocket/socket';
+import { UserContext } from '../../../../authContext';
+import { SocketsContext } from '../../../../socketsContext';
 
 const MessageForm = ({ channel }) => {
   const { username } = useContext(UserContext);
+  const { newMessage } = useContext(SocketsContext);
   const { t } = useTranslation();
 
   return (
@@ -16,8 +17,9 @@ const MessageForm = ({ channel }) => {
       onSubmit={(values, { resetForm }) => {
         try {
           if (values.message.length > 0) {
-            ioClient.emit('newMessage', { body: values.message, channelId: channel.id, username });
-            resetForm();
+            newMessage({ body: values.message, channelId: channel.id, username }, () => {
+              resetForm();
+            });
           }
         } catch (e) {
           console.error(e);

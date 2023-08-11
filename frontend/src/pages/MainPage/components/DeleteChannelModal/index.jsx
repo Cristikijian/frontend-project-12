@@ -1,25 +1,25 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-
-import sockets from '../../../../sockets';
+import { SocketsContext } from '../../../../socketsContext';
 
 const DeleteChannelModal = ({
   show, onHide, id,
 }) => {
   const { t } = useTranslation();
+  const { removeChannel, onRemoveChannel } = useContext(SocketsContext);
 
   const handleChannelRemove = () => {
     try {
-      sockets.removeChannel(id, onHide);
+      removeChannel(id, onHide);
     } catch {
       toast.error(t('errors.network'));
     }
   };
 
   useEffect(() => {
-    sockets.onRemoveChannel(() => {
+    onRemoveChannel(() => {
       toast.success(t('toasts.delete'));
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps

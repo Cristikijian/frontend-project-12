@@ -6,7 +6,7 @@ import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../context';
+import { UserContext } from '../../../../authContext';
 import { apiRoutes } from '../../../../routes';
 
 const SignUpForm = () => {

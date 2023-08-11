@@ -1,20 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
-import ioClient from '../../../../servicesSocket/socket';
 import { actions as messagesActions, selectors as messagesSelectors } from '../../../../slices/messagesSlice';
+import { SocketsContext } from '../../../../socketsContext';
 import Message from '../Message';
 import MessageForm from '../MessageForm';
 
 const ChatContainer = ({ channel }) => {
+  const { onNewMessage } = useContext(SocketsContext);
   const messages = useSelector(messagesSelectors.selectAll);
   const filtredMessages = messages.filter((message) => channel.id === message.channelId);
   const dispatch = useDispatch();
   const { t } = useTranslation();
 
   useEffect(() => {
-    ioClient.on('newMessage', (message) => {
-      console.log(message);
+    onNewMessage('newMessage', (message) => {
       dispatch(messagesActions.addMessage(message));
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps

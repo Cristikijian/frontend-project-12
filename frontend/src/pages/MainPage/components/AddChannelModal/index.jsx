@@ -6,11 +6,12 @@ import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../context';
-import ioClient from '../../../../servicesSocket/socket';
+import { UserContext } from '../../../../authContext';
+import { SocketsContext } from '../../../../socketsContext';
 
 const AddChannelModal = ({ show, onHide }) => {
   const { token, username } = useContext(UserContext);
+  const { addChannel } = useContext(SocketsContext);
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -41,9 +42,10 @@ const AddChannelModal = ({ show, onHide }) => {
       }
 
       const newChannel = { name: values.channelName, author: values.author };
-      ioClient.emit('newChannel', newChannel);
-      resetForm();
-      onHide();
+      addChannel(('newChannel', newChannel), () => {
+        resetForm();
+        onHide();
+      });
     } catch (e) {
       console.error(e, e.code, e.message);
       if (e.message === 'Network Error') {

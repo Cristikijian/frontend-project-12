@@ -6,11 +6,12 @@ import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../context';
-import sockets from '../../../../sockets';
+import { UserContext } from '../../../../authContext';
+import { SocketsContext } from '../../../../socketsContext';
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
   const { token } = useContext(UserContext);
+  const { onRenameChannel } = useContext(SocketsContext);
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -48,7 +49,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
         return;
       }
 
-      sockets.onRenameChannel({ id: channel.id, name: values.channelName }, () => {
+      onRenameChannel({ id: channel.id, name: values.channelName }, () => {
         toast.success(t('toasts.rename'));
       });
 
