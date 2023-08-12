@@ -14,7 +14,7 @@ const ChatContainer = ({ channel }) => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    onNewMessage('newMessage', (message) => {
+    onNewMessage((message) => {
       dispatch(messagesActions.addMessage(message));
     });
   // eslint-disable-next-line react-hooks/exhaustive-deps
