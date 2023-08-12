@@ -14,8 +14,8 @@ const AuthContextProvider = ({ children }) => {
     window.localStorage.setItem('username', username);
   };
 
-  const logout = () => {
-    setContext(null, null);
+  const logout = (token, username) => {
+    setContext({ token, username });
     window.localStorage.clear();
   };
 
