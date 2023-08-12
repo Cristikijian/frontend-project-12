@@ -28,7 +28,7 @@ const getSockets = () => {
       ioClient.on('renameChannel', cb);
     },
     newMessage: (message, cb) => {
-      ioClient.emit('newMessage', cb);
+      ioClient.emit('newMessage', message, cb);
     },
 
     onNewMessage: (cb) => {
