@@ -3,12 +3,14 @@ import cn from 'classnames';
 import { Field, Form, Formik } from 'formik';
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import { AuthContext } from '../../../../authContext';
 import { apiRoutes } from '../../../../routes';
 
 const SinginForm = () => {
   const { login } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [signInError, setError] = useState();
   const { t } = useTranslation();
 
@@ -29,6 +31,7 @@ const SinginForm = () => {
         try {
           const response = await axios.post(apiRoutes.login, values);
           login(response.data.token, response.data.username);
+          navigate('/');
         } catch (e) {
           if (e.response.status === 401) {
             setError(true);
