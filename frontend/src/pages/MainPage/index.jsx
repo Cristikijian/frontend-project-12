@@ -42,6 +42,7 @@ const MainPage = () => {
         dispatch(channelActions.addChannels(data.channels));
         dispatch(channelActions.setCurrentChannelId(data.currentChannelId));
       } catch (e) {
+        console.log(e);
         if (e.response.status === 401) {
           logout();
           navigate(appRoutes.login);

@@ -11,7 +11,7 @@ import { apiRoutes } from '../../../../routes';
 
 const SignUpForm = () => {
   const [userCreationError, setError] = useState(false);
-  const { updateUser } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const { t } = useTranslation();
@@ -44,7 +44,7 @@ const SignUpForm = () => {
             apiRoutes.signUp,
             { username: values.username, password: values.password },
           );
-          updateUser(response.data.token, response.data.username);
+          login(response.data.token, response.data.username);
           navigate('/');
         } catch (e) {
           setError(true);

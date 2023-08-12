@@ -8,7 +8,7 @@ import { AuthContext } from '../../../../authContext';
 import { apiRoutes } from '../../../../routes';
 
 const SinginForm = () => {
-  const { updateUser } = useContext(AuthContext);
+  const { login } = useContext(AuthContext);
   const [signInError, setError] = useState();
   const { t } = useTranslation();
 
@@ -28,7 +28,7 @@ const SinginForm = () => {
       onSubmit={async (values) => {
         try {
           const response = await axios.post(apiRoutes.login, values);
-          updateUser(response.data.token, response.data.username);
+          login(response.data.token, response.data.username);
         } catch (e) {
           if (e.response.status === 401) {
             setError(true);
