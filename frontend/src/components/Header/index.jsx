@@ -1,16 +1,15 @@
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserContext } from '../../authContext';
+import { AuthContext } from '../../authContext';
 
 const Header = () => {
-  const context = useContext(UserContext);
+  const { logout, token } = useContext(AuthContext);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { setContext, token } = context;
+
   const handleSignOut = () => {
-    setContext({ ...context, token: null, username: null });
-    window.localStorage.clear();
+    logout();
     navigate('/login');
   };
   return (

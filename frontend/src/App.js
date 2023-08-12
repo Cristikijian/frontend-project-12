@@ -4,7 +4,7 @@ import { I18nextProvider } from 'react-i18next';
 import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { UserContextProvider } from './authContext';
+import { AuthContextProvider } from './authContext';
 import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import LoginPage from './pages/LoginPage';
@@ -45,11 +45,11 @@ const App = ({ i18n, sockets }) => (
   <RollbarProvider config={rollbarConfig}>
     <ErrorBoundary>
       <I18nextProvider i18n={i18n}>
-        <UserContextProvider>
+        <AuthContextProvider>
           <SocketsContextProvider sockets={sockets}>
             <RouterProvider router={router} />
           </SocketsContextProvider>
-        </UserContextProvider>
+        </AuthContextProvider>
         <ToastContainer />
       </I18nextProvider>
     </ErrorBoundary>

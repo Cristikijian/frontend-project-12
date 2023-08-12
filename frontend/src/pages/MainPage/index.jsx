@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { UserContext } from '../../authContext';
+import { AuthContext } from '../../authContext';
 import { apiRoutes, appRoutes } from '../../routes';
 import { actions as channelActions, selectors as channelSelectors } from '../../slices/channelsSlice';
 import { actions as modalWindowActions } from '../../slices/modalWindowSlice';
@@ -16,7 +16,9 @@ import ChannelModal from './components/ChannelModal';
 import ChatContainer from './components/ChatContainer';
 
 const MainPage = () => {
-  const { token, setContext } = useContext(UserContext);
+  const {
+    token, username, logout,
+  } = useContext(AuthContext);
   const { onRemoveChannel, onRenameChannel, onAddChannel } = useContext(SocketsContext);
   const dispatch = useDispatch();
   const { t } = useTranslation();
@@ -41,7 +43,7 @@ const MainPage = () => {
         dispatch(channelActions.setCurrentChannelId(data.currentChannelId));
       } catch (e) {
         if (e.response.status === 401) {
-          setContext({ token: null, username: null });
+          logout();
           navigate(appRoutes.login);
           return;
         }
@@ -52,23 +54,19 @@ const MainPage = () => {
     fetchData();
 
     onRemoveChannel((payload) => {
-      // if (payload.id === currentChannel.id) { current channel is undefined
-      // dispatch(channelActions.setCurrentChannelId(defaultChannel.current));
-      // }
-
+      dispatch(channelActions.setCurrentChannelId(defaultChannel.current));
       dispatch(channelActions.removeChannel(payload.id));
     });
 
     onRenameChannel((payload) => {
       dispatch(channelActions.updateChannel({ id: payload.id, changes: { name: payload.name } }));
-      toast.success(t('toasts.rename'));
     });
 
     onAddChannel((payload) => {
-      console.log(payload);
-      dispatch(channelActions.setCurrentChannelId(payload.id));
+      if (payload.author === username) {
+        dispatch(channelActions.setCurrentChannelId(payload.id));
+      }
       dispatch(channelActions.addChannel(payload));
-      toast.success(t('toasts.add'));
     });
 
   // eslint-disable-next-line react-hooks/exhaustive-deps

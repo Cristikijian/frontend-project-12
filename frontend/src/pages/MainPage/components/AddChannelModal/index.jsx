@@ -6,11 +6,11 @@ import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../authContext';
+import { AuthContext } from '../../../../authContext';
 import { SocketsContext } from '../../../../socketsContext';
 
 const AddChannelModal = ({ show, onHide }) => {
-  const { token, username } = useContext(UserContext);
+  const { token, username } = useContext(AuthContext);
   const { addChannel } = useContext(SocketsContext);
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
@@ -43,6 +43,9 @@ const AddChannelModal = ({ show, onHide }) => {
 
       const newChannel = { name: values.channelName, author: values.author };
       addChannel(('newChannel', newChannel), () => {
+        if (newChannel.author === username) {
+          toast.success(t('toasts.add'));
+        }
         resetForm();
         onHide();
       });

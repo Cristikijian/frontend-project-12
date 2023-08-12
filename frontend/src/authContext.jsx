@@ -1,25 +1,33 @@
 import React, { useState } from 'react';
 
-const UserContext = React.createContext({});
+const AuthContext = React.createContext({});
 
-const UserContextProvider = ({ children }) => {
+const AuthContextProvider = ({ children }) => {
   const [context, setContext] = useState({
     token: window.localStorage.getItem('token'),
     username: window.localStorage.getItem('username'),
   });
 
-  const updateUser = (token, username) => {
+  const login = (token, username) => {
     setContext({ token, username });
     window.localStorage.setItem('token', token);
     window.localStorage.setItem('username', username);
   };
 
+  const logout = () => {
+    setContext(null, null);
+    window.localStorage.clear();
+  };
+
   return (
     // eslint-disable-next-line react/jsx-no-constructed-context-values
-    <UserContext.Provider value={{ ...context, setContext, updateUser }}>
+    <AuthContext.Provider value={{
+      ...context, setContext, login, logout,
+    }}
+    >
       {children}
-    </UserContext.Provider>
+    </AuthContext.Provider>
   );
 };
 
-export { UserContext, UserContextProvider };
+export { AuthContext, AuthContextProvider };

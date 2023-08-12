@@ -4,11 +4,11 @@ import { Field, Form, Formik } from 'formik';
 import React, { useContext, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../authContext';
+import { AuthContext } from '../../../../authContext';
 import { apiRoutes } from '../../../../routes';
 
 const SinginForm = () => {
-  const { updateUser } = useContext(UserContext);
+  const { updateUser } = useContext(AuthContext);
   const [signInError, setError] = useState();
   const { t } = useTranslation();
 

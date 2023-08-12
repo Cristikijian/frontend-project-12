@@ -2,12 +2,12 @@ import React, { useContext } from 'react';
 import { Button, ButtonGroup, Dropdown } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
-import { UserContext } from '../../../../authContext';
+import { AuthContext } from '../../../../authContext';
 import { actions as channelActions } from '../../../../slices/channelsSlice';
 import { actions as modalWindowActions } from '../../../../slices/modalWindowSlice';
 
 const Channel = ({ channel, currentChannel }) => {
-  const { username } = useContext(UserContext);
+  const { username } = useContext(AuthContext);
   const dispatch = useDispatch();
   const { t } = useTranslation();
   const handleChannelSelect = (id) => {

@@ -1,29 +1,29 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
+import { AuthContext } from '../../../../authContext';
 import { SocketsContext } from '../../../../socketsContext';
 
 const DeleteChannelModal = ({
   show, onHide, id,
 }) => {
   const { t } = useTranslation();
-  const { removeChannel, onRemoveChannel } = useContext(SocketsContext);
+  const { username } = useContext(AuthContext);
+  const { removeChannel } = useContext(SocketsContext);
+  const channel = useSelector((state) => state.modalWindow.channel);
 
   const handleChannelRemove = () => {
     try {
       removeChannel(id, onHide);
+      if (channel.author === username) {
+        toast.success(t('toasts.delete'));
+      }
     } catch {
       toast.error(t('errors.network'));
     }
   };
-
-  useEffect(() => {
-    onRemoveChannel(() => {
-      toast.success(t('toasts.delete'));
-    });
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id]);
 
   return (
     <Modal show={show}>

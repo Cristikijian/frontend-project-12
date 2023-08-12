@@ -6,12 +6,12 @@ import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../authContext';
+import { AuthContext } from '../../../../authContext';
 import { SocketsContext } from '../../../../socketsContext';
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
-  const { token } = useContext(UserContext);
-  const { onRenameChannel } = useContext(SocketsContext);
+  const { token, username } = useContext(AuthContext);
+  const { renameChannel } = useContext(SocketsContext);
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
   const [isLoading, setIsLoading] = useState(false);
@@ -33,12 +33,18 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
     channelName: Yup.string().required(t('errors.required')),
   });
 
-  const handleSubmit = async (values, { resetForm }) => {
+  const handleSubmit = async (values) => {
     try {
       setIsLoading(true);
-      setCustomError(false);
-
       const { data } = await axios.get('/api/v1/data', { headers: { Authorization: `Bearer ${token}` } });
+
+      renameChannel({ id: channel.id, name: values.channelName }, () => {
+        if (channel.author === username) {
+          toast.success(t('toasts.rename'));
+          setIsLoading(false);
+        }
+        setCustomError(false);
+      });
 
       if (channel.name === values.channelName) {
         onHide();
@@ -49,11 +55,6 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
         return;
       }
 
-      onRenameChannel({ id: channel.id, name: values.channelName }, () => {
-        toast.success(t('toasts.rename'));
-      });
-
-      resetForm();
       onHide();
     } catch (e) {
       console.error(e, e.code, e.message);
@@ -63,7 +64,6 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
       }
     } finally {
       setIsLoading(false);
-      inputRef.reset();
     }
   };
 
@@ -71,7 +71,7 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
     <Modal show={show}>
       <Formik
         initialValues={{
-          channelName: '',
+          channelName: channel.name,
         }}
         validationSchema={channelNameSchema}
         onSubmit={handleSubmit}

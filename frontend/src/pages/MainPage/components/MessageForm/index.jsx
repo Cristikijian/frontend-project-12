@@ -1,11 +1,11 @@
 import { Field, Form, Formik } from 'formik';
 import React, { useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { UserContext } from '../../../../authContext';
+import { AuthContext } from '../../../../authContext';
 import { SocketsContext } from '../../../../socketsContext';
 
 const MessageForm = ({ channel }) => {
-  const { username } = useContext(UserContext);
+  const { username } = useContext(AuthContext);
   const { newMessage } = useContext(SocketsContext);
   const { t } = useTranslation();
 

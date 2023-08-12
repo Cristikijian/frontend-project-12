@@ -6,12 +6,12 @@ import { Button } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import { UserContext } from '../../../../authContext';
+import { AuthContext } from '../../../../authContext';
 import { apiRoutes } from '../../../../routes';
 
 const SignUpForm = () => {
   const [userCreationError, setError] = useState(false);
-  const { updateUser } = useContext(UserContext);
+  const { updateUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const { t } = useTranslation();
@@ -51,33 +51,30 @@ const SignUpForm = () => {
         }
       }}
     >
-      {({ errors }) => {
-        console.log(errors);
-        return (
-          <Form className="w-50">
-            <h1 className="text-center mb-4">{t('registration')}</h1>
-            <div className="form-floating mb-3">
-              <Field placeholder={t('errors.min3')} name="username" autoComplete="username" id="username" className={cn('form-control', { 'is-invalid': errors.username })} />
-              <label className="form-label" htmlFor="username">{t('user.username')}</label>
-              <div className="invalid-tooltip">{errors.username}</div>
+      {({ errors }) => (
+        <Form className="w-50">
+          <h1 className="text-center mb-4">{t('registration')}</h1>
+          <div className="form-floating mb-3">
+            <Field placeholder={t('errors.min3')} name="username" autoComplete="username" id="username" className={cn('form-control', { 'is-invalid': errors.username })} />
+            <label className="form-label" htmlFor="username">{t('user.username')}</label>
+            <div className="invalid-tooltip">{errors.username}</div>
+          </div>
+          <div className="form-floating mb-3">
+            <Field placeholder={t('errors.min6')} name="password" aria-describedby="passwordHelpBlock" autoComplete="new-password" type="password" id="password" className={cn('form-control', { 'is-invalid': errors.password })} />
+            <div className="invalid-tooltip">{errors.password}</div>
+            <label className="form-label" htmlFor="password">{t('user.password')}</label>
+          </div>
+          <div className="form-floating mb-4">
+            <Field placeholder={t('match')} name="confirmPassword" autoComplete="new-password" type="password" id="confirmPassword" className={cn('form-control', { 'is-invalid': errors.confirmPassword || userCreationError })} />
+            <div className="invalid-tooltip">
+              {userCreationError ? t('errors.exists') : null}
+              {errors.confirmPassword}
             </div>
-            <div className="form-floating mb-3">
-              <Field placeholder={t('errors.min6')} name="password" aria-describedby="passwordHelpBlock" autoComplete="new-password" type="password" id="password" className={cn('form-control', { 'is-invalid': errors.password })} />
-              <div className="invalid-tooltip">{errors.password}</div>
-              <label className="form-label" htmlFor="password">{t('user.password')}</label>
-            </div>
-            <div className="form-floating mb-4">
-              <Field placeholder={t('match')} name="confirmPassword" autoComplete="new-password" type="password" id="confirmPassword" className={cn('form-control', { 'is-invalid': errors.confirmPassword || userCreationError })} />
-              <div className="invalid-tooltip">
-                {userCreationError ? t('errors.exists') : null}
-                {errors.confirmPassword}
-              </div>
-              <label className="form-label" htmlFor="confirmPassword">{t('user.confirmPassword')}</label>
-            </div>
-            <Button variant="outline-primary" type="submit" className="w-100">{t('buttons.registration')}</Button>
-          </Form>
-        );
-      }}
+            <label className="form-label" htmlFor="confirmPassword">{t('user.confirmPassword')}</label>
+          </div>
+          <Button variant="outline-primary" type="submit" className="w-100">{t('buttons.registration')}</Button>
+        </Form>
+      )}
     </Formik>
   );
 };

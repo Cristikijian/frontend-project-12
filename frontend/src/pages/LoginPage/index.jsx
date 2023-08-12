@@ -1,11 +1,11 @@
 import { useContext, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../../authContext';
+import { AuthContext } from '../../authContext';
 import SinginForm from './components/SinginForm';
 
 const LoginPage = () => {
-  const { token } = useContext(UserContext);
+  const { token } = useContext(AuthContext);
   const { t } = useTranslation();
   const navigate = useNavigate();
   useEffect(() => {
