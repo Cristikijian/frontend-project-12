@@ -1,16 +1,18 @@
-import axios from 'axios';
 import cn from 'classnames';
 import { Field, Form, Formik } from 'formik';
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
 import { AuthContext } from '../../../../authContext';
+import { selectors as channelSelectors } from '../../../../slices/channelsSlice';
 import { SocketsContext } from '../../../../socketsContext';
 
 const AddChannelModal = ({ show, onHide }) => {
-  const { token, username } = useContext(AuthContext);
+  const { username } = useContext(AuthContext);
+  const channels = useSelector(channelSelectors.selectAll);
   const { addChannel } = useContext(SocketsContext);
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
@@ -34,9 +36,7 @@ const AddChannelModal = ({ show, onHide }) => {
       setIsLoading(true);
       setCustomError(false);
 
-      const { data } = await axios.get('/api/v1/data', { headers: { Authorization: `Bearer ${token}` } });
-
-      if (data.channels.some((channel) => channel.name === values.channelName)) {
+      if (channels.some((channel) => channel.name === values.channelName)) {
         setCustomError(t('errors.uniq'));
         return;
       }

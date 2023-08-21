@@ -15,19 +15,15 @@ const DeleteChannelModal = ({
   const channel = useSelector((state) => state.modalWindow.channel);
 
   const handleChannelRemove = () => {
-    try {
-      removeChannel(id, onHide);
-      if (channel.author === username) {
-        toast.success(t('toasts.delete'));
-      }
-    } catch {
-      toast.error(t('errors.network'));
+    removeChannel(id, onHide);
+    if (channel.author === username) {
+      toast.success(t('toasts.delete'));
     }
   };
 
   return (
     <Modal show={show}>
-      <Modal.Header closeButton>
+      <Modal.Header closeButton onHide={onHide}>
         <Modal.Title>{t('channels.delete')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>

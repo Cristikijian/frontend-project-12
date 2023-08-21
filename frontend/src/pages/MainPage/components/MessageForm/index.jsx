@@ -15,14 +15,10 @@ const MessageForm = ({ channel }) => {
         message: '',
       }}
       onSubmit={(values, { resetForm }) => {
-        try {
-          if (values.message.length > 0) {
-            newMessage({ body: values.message, channelId: channel.id, username }, () => {
-              resetForm();
-            });
-          }
-        } catch (e) {
-          console.error(e);
+        if (values.message.length > 0) {
+          newMessage({ body: values.message, channelId: channel.id, username }, () => {
+            resetForm();
+          });
         }
       }}
     >

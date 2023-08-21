@@ -5,6 +5,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { initReactI18next } from 'react-i18next';
 import { Provider } from 'react-redux';
+import { toast } from 'react-toastify';
 import App from './App';
 import './index.css';
 import resources from './locales/index.js';
@@ -20,6 +21,13 @@ const init = () => {
   i18n.use(initReactI18next).init({
     resources,
     fallbackLng: 'ru',
+  });
+
+  sockets.onDisconnect((reason) => {
+    console.log(reason, 'reason');
+    if (reason === 'transport close' || reason === 'transport error') {
+      toast.error((i18n.t('errors.network')));
+    }
   });
 
   const root = ReactDOM.createRoot(document.getElementById('root'));

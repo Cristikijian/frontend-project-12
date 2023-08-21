@@ -39,7 +39,7 @@ const Channel = ({ channel, currentChannel }) => {
              eventKey="1"
              onClick={() => {
                dispatch(modalWindowActions.setModalType({ modalType: 'remove' }));
-               dispatch(modalWindowActions.setIsOpening(true));
+               dispatch(modalWindowActions.openModal());
                dispatch(modalWindowActions.setChannel(channel));
              }}
            >
@@ -50,7 +50,7 @@ const Channel = ({ channel, currentChannel }) => {
              eventKey="2"
              onClick={() => {
                dispatch(modalWindowActions.setModalType({ modalType: 'rename' }));
-               dispatch(modalWindowActions.setIsOpening(true));
+               dispatch(modalWindowActions.openModal());
                dispatch(modalWindowActions.setChannel(channel));
              }}
            >

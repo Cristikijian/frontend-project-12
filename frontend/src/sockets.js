@@ -35,6 +35,10 @@ const getSockets = () => {
     onNewMessage: (cb) => {
       ioClient.on('newMessage', cb);
     },
+
+    onDisconnect: (cb) => {
+      ioClient.on('disconnect', cb);
+    },
   };
 
   return sockets;

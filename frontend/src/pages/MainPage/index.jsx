@@ -74,8 +74,9 @@ const MainPage = () => {
   }, []);
 
   const openAddChannelModal = () => {
+    console.log('addopen');
     dispatch(modalWindowActions.setModalType({ modalType: 'add' }));
-    dispatch(modalWindowActions.setIsOpening(true));
+    dispatch(modalWindowActions.openModal());
   };
 
   return (
