@@ -27,39 +27,23 @@ const AddChannelModal = ({ show, onHide }) => {
   const { t } = useTranslation();
 
   const uniqChannelNameSchema = Yup.object().shape({
-    channelName: Yup.string().required(t('errors.required')),
+    channelName: Yup.string().required(t('errors.required')).notOneOf(channels.map((currentChannel) => currentChannel.name), t('errors.uniq')),
 
   });
 
   const handleSubmit = async (values, { resetForm }) => {
-    try {
-      setIsLoading(true);
-      setCustomError(false);
+    setIsLoading(true);
 
-      if (channels.some((channel) => channel.name === values.channelName)) {
-        setCustomError(t('errors.uniq'));
-        return;
-      }
-
-      const newChannel = { name: values.channelName, author: values.author };
-      addChannel(('newChannel', newChannel), () => {
-        if (newChannel.author === username) {
-          toast.success(t('toasts.add'));
-        }
-        resetForm();
-        onHide();
-      });
-    } catch (e) {
-      console.error(e, e.code, e.message);
-      if (e.message === 'Network Error') {
-        toast.error(t('errors.network'));
-        setCustomError(false);
-      }
-    } finally {
+    const newChannel = { name: values.channelName, author: values.author };
+    addChannel(('newChannel', newChannel), () => {
+      toast.success(t('toasts.add'));
+      resetForm();
+      onHide();
       setIsLoading(false);
       inputRef.reset();
-    }
+    });
   };
+
   return (
     <Modal show={show}>
       <Formik

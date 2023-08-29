@@ -24,7 +24,6 @@ const init = () => {
   });
 
   sockets.onDisconnect((reason) => {
-    console.log(reason, 'reason');
     if (reason === 'transport close' || reason === 'transport error') {
       toast.error((i18n.t('errors.network')));
     }

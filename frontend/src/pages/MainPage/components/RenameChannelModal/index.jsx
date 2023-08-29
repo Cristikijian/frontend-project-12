@@ -1,16 +1,16 @@
-import axios from 'axios';
 import cn from 'classnames';
 import { Field, Form, Formik } from 'formik';
 import React, { useContext, useEffect, useState } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
+import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
 import * as Yup from 'yup';
-import { AuthContext } from '../../../../authContext';
+import { selectors as channelSelectors } from '../../../../slices/channelsSlice';
 import { SocketsContext } from '../../../../socketsContext';
 
 const RenameChannelModal = ({ show, onHide, channel }) => {
-  const { token, username } = useContext(AuthContext);
+  const channels = useSelector(channelSelectors.selectAll);
   const { renameChannel } = useContext(SocketsContext);
   const [inputRef, setInputRef] = useState();
   const [customError, setCustomError] = useState();
@@ -30,41 +30,22 @@ const RenameChannelModal = ({ show, onHide, channel }) => {
   }
 
   const channelNameSchema = Yup.object().shape({
-    channelName: Yup.string().required(t('errors.required')),
+    channelName: Yup.string().required(t('errors.required')).notOneOf(channels.map((currentChannel) => currentChannel.name), t('errors.uniq')),
   });
 
   const handleSubmit = async (values) => {
-    try {
-      setIsLoading(true);
-      const { data } = await axios.get('/api/v1/data', { headers: { Authorization: `Bearer ${token}` } });
-
-      renameChannel({ id: channel.id, name: values.channelName }, () => {
-        if (channel.author === username) {
-          toast.success(t('toasts.rename'));
-          setIsLoading(false);
-        }
-        setCustomError(false);
-      });
-
-      if (channel.name === values.channelName) {
-        onHide();
-        return;
-      }
-      if (data.channels.some((currentChannel) => currentChannel.name === values.channelName)) {
-        setCustomError(t('errors.uniq'));
-        return;
-      }
-
+    if (channel.name === values.channelName) {
       onHide();
-    } catch (e) {
-      console.error(e, e.code, e.message);
-      if (e.message === 'Network Error') {
-        toast.error(t('errors.network'));
-        setCustomError(false);
-      }
-    } finally {
-      setIsLoading(false);
+      return;
     }
+
+    setIsLoading(true);
+
+    renameChannel({ id: channel.id, name: values.channelName }, () => {
+      toast.success(t('toasts.rename'));
+      setIsLoading(false);
+      onHide();
+    });
   };
 
   return (

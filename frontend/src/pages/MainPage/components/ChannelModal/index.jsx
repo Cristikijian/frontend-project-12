@@ -10,7 +10,7 @@ const ChannelModal = ({ defaultChannel }) => {
   const isOpening = useSelector((state) => state.modalWindow.isOpening);
   const modalType = useSelector((state) => state.modalWindow.modalType);
   const channel = useSelector((state) => state.modalWindow.channel);
-  console.log(isOpening);
+
   const handleClose = () => {
     dispatch(modalWindowActions.closeModal());
   };

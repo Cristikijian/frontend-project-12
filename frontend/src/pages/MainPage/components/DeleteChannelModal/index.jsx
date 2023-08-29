@@ -1,24 +1,20 @@
 import React, { useContext } from 'react';
 import { Button, Modal } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import { useSelector } from 'react-redux';
 import { toast } from 'react-toastify';
-import { AuthContext } from '../../../../authContext';
 import { SocketsContext } from '../../../../socketsContext';
 
 const DeleteChannelModal = ({
   show, onHide, id,
 }) => {
   const { t } = useTranslation();
-  const { username } = useContext(AuthContext);
   const { removeChannel } = useContext(SocketsContext);
-  const channel = useSelector((state) => state.modalWindow.channel);
 
   const handleChannelRemove = () => {
-    removeChannel(id, onHide);
-    if (channel.author === username) {
+    removeChannel(id, () => {
       toast.success(t('toasts.delete'));
-    }
+      onHide();
+    });
   };
 
   return (
