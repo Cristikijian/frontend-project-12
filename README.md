@@ -15,5 +15,3 @@ $ make install
 $ make start - run the frontend & backend
 $ make start-frontend - run only frontend
 $ make start-backend - run only backend
-
-App https://railway.app/project/11e46f47-ba55-41ac-8be2-793c89f67a61/service/976a3555-8b57-41ac-8568-3b10483fb76f
